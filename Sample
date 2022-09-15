@@ -1,0 +1,175 @@
+package main
+
+import (
+  "net/http" 
+  "src/configs"
+  "src/routes"
+  "github.com/gin-gonic/gin"
+  "github.com/couchbase/gocb/v2"
+  //"github.com/couchbase/gocb/v2/search"
+  //"github.com/google/uuid"
+	"time"
+	"errors"
+	//"fmt"
+
+)
+
+var (
+	defaultCBHost          = "db"
+	defaultCBScheme        = "couchbases://" // Set to couchbase:// if using Couchbase Server Community Edition
+	travelSampleBucketName = "travel-sample"
+	defaultCBUsername      = "Administrator"
+	defaultCBPassword      = "password"
+	jwtSecret              = []byte("IAMSOSECRETIVE!")
+)
+
+type SampleApp struct {
+	cluster *gocb.Cluster
+	bucket  *gocb.Bucket
+	
+}
+
+type RequestBody struct{
+	pid string
+	firstName string
+	lastName string
+	email string
+	password string
+
+}
+
+
+func main() {
+// listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
+username:="Administrator"
+password:="Password"
+bucket_name:="travel-sample"
+
+
+clusterOpts := gocb.ClusterOptions{
+	Authenticator: gocb.PasswordAuthenticator{
+		Username: username,
+		Password: password,
+	},
+
+	
+}
+cluster, err := gocb.Connect("couchbase://127.0.0.1", clusterOpts)
+
+if err != nil {
+	panic(err)
+}
+
+bucket:=cluster.Bucket(bucket_name)
+app:= &SampleApp{
+	cluster: cluster,
+	bucket: bucket,
+
+}
+r:=gin.Default()
+scope:=app.bucket.Scope("_default")
+col:=scope.Collection("_default")
+//fmt.Println(cluster)
+//Setup the different routes and group them
+
+nsauthhealthcheck:=r.Group("api/v1/healthcheck")
+{
+	nsauthhealthcheck.GET("/", func(c *gin.Context){
+		c.JSON(http.StatusOK,gin.H{
+			"time":time.Now(),
+		})
+	})
+
+}
+
+nsprofile:=r.Group("api/v1/profile")
+{	//First route to insert data to the database
+	nsprofile.POST("/",func(c *gin.Context){
+
+		var data RequestBody
+		if err := c.BindJSON(&data); err != nil {
+			// DO SOMETHING WITH THE ERROR
+			//Error while getting request
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"error":"error while getting request",
+			})
+		}
+		key:="unique_key"
+		data.pid=key
+		//Hash the password here
+
+		//perform insert operation
+		_, err:=col.Insert(key,data,nil)
+
+		if errors.Is(err, gocb.ErrDocumentExists) {
+			//writeJsonFailure(w, 409, ErrUserExists)
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"error":"Key Already exists",
+			})
+			
+		}else{
+			c.JSON(http.StatusOK,gin.H{
+				"output":data,
+			})
+		}
+
+	
+	})
+
+	//Second route to get by id
+	nsprofile.GET("/:id",func(c *gin.Context){
+		userid := c.Param("id")
+		q,err:=col.Get(userid,nil)
+		if errors.Is(err, gocb.ErrDocumentNotFound) {
+			//writeJsonFailure(w, 409, ErrUserExists)
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"error":"Document not found",
+			})
+			
+		}else{
+			c.JSON(http.StatusOK,gin.H{
+				"message":"Found data in the db",
+				"statusCode":err,
+				"messag":q,
+				"collect":col,
+			})
+		}
+
+
+	})
+
+	//Third route to put/upsert method with id
+	nsprofile.PUT("/:id",func(c *gin.Context){
+		var data RequestBody
+		if err := c.BindJSON(&data); err != nil {
+			// DO SOMETHING WITH THE ERROR
+			//Error while getting request
+			//panic(err)
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"error":"error while getting request",
+			})
+		}
+		
+		data.pid="id"
+		_,err:=col.Upsert("id",data,nil)
+		if errors.Is(err, gocb.ErrDocumentNotFound) {
+			//writeJsonFailure(w, 409, ErrUserExists)
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"error":"Key Not found",
+			})
+			
+		}else{
+			c.JSON(http.StatusOK,gin.H{
+				"message":"Inserted into database",
+			})
+		}
+
+
+	})
+}
+
+
+r.Run()
+
+}
