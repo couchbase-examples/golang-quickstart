@@ -4,8 +4,6 @@ import (
     "encoding/json"
     "testing"
     "net/http"
-    //"fmt"
-    //"strconv"
     "bytes"
     "io/ioutil"
     "app/responses"
@@ -29,12 +27,12 @@ func Test_health_check(t *testing.T){
     //Test the health check end point
     var url=base+"/api/v1/health"
     resp, err:=http.Get(url)
-    //fmt.Println(resp.StatusCode)
+    
     if resp.StatusCode!=200{
         t.Errorf("Error %d", err)
     }
 
-    //fmt.Println(resp)
+    
 }
 
 func Test_add_profile(t *testing.T){
@@ -109,8 +107,6 @@ func Test_get_user_profile__invalid_id(t *testing.T){
     var url=base+"/api/v1/profile/"+id
     //fmt.Println(url)
     resp, err:=http.Get(url)
-    //fmt.Println(resp)
-    //fmt.Println(resp.StatusCode)
     if resp.StatusCode==200{
         //Error:Document not found
         t.Errorf("Error %d", err)

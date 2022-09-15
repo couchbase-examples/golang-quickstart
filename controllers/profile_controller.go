@@ -10,7 +10,6 @@ import(
 	"github.com/couchbase/gocb/v2"
 	"errors"
 	"github.com/google/uuid"
-	"fmt"
 	"app/db"
 	"app/responses"
 )
@@ -63,10 +62,7 @@ func InsertProfile() gin.HandlerFunc{
 			profile_key:=new_profile.Pid
 			//perform insert operation
 			res, err:=col.Insert(profile_key,new_profile,nil)
-			fmt.Println(res)
-			//fmt.Println(new_profile.LastName)
-
-
+			_ =res
 			c.JSON(http.StatusOK,responses.ProfileResponse{Status: http.StatusOK, Message: "Document successfully inserted", Data: map[string] interface{}{"pid":profile_key}})
 
 
@@ -114,7 +110,6 @@ func UpdateProfile() gin.HandlerFunc{
 	var getDoc models.RequestBody
 	data.Pid=profile_id
 	_,err:=col.Upsert(profile_id,data,nil)
-	fmt.Println()
 	if errors.Is(err, gocb.ErrDocumentNotFound) {
 		c.JSON(http.StatusInternalServerError,responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document with the key does not exist", Data: map[string] interface{}{"data":err.Error()}})
 			return
