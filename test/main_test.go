@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"io/ioutil"
     "time"
+    //"app/models"
 )
 
 type Profile struct {
@@ -110,7 +111,7 @@ func Test_get_user_profile__invalid_id(t *testing.T) {
 
 func Test_update_user_profile(t *testing.T) {
 	var url = base + "/api/v1/profile/"
-
+    //var c models.rofile
 	postBody, _ := json.Marshal(map[string]string{
 		"FirstName": "Mike",
 		"LastName":  "doe",
@@ -126,10 +127,10 @@ func Test_update_user_profile(t *testing.T) {
 		t.Errorf("Error %d", err)
 	}
 	m := make(map[string]interface{})
+    //var m interface{}
 	json.Unmarshal(body, &m)
     //Type assertion
-	Data := m["data"].(map[string]interface{})["profile"]
-    id := Data.(map[string]interface{})["Pid"].(string)
+	id := m["data"].(map[string]interface{})["Pid"].(string)
 	updated_postBody, _ := json.Marshal(map[string]string{
 		"FirstName": "Mike",
 		"LastName":  "John",
@@ -169,9 +170,7 @@ func Test_delete_user_profile(t *testing.T) {
 	}
 	m := make(map[string]interface{})
 	json.Unmarshal(body, &m)
-    Data := m["data"].(map[string]interface{})["profile"]
-	id := Data.(map[string]interface{})["Pid"].(string)
-	//fmt.Println(id)
+	id := m["data"].(map[string]interface{})["Pid"].(string)
 	var url_delete = url + id
 	req_delete, _ := http.NewRequest(http.MethodDelete, url_delete, nil)
 	client := &http.Client{}
@@ -194,7 +193,6 @@ func Test_delete_invalid_user_profile(t *testing.T) {
 	resp_delete, _ := client.Do(req_delete)
 	req_delete.Header.Set("Content-Type", "application/json")
 	resp_body, _ := ioutil.ReadAll(resp_delete.Body)
-	//fmt.Println(resp_body)
 	var q responses.ProfileResponse
 	json.Unmarshal(resp_body, &q)
 	if q.Status == 200 {
