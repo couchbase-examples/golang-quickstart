@@ -38,10 +38,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "type": ""
                         }
                     }
                 }
@@ -64,8 +61,61 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBody"
+                            "$ref": "#/definitions/models.Profile"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.ProfileResponse"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Page Not found"
+                    },
+                    "500": {
+                        "description": "Error while getting examples"
+                    }
+                }
+            }
+        },
+        "/api/v1/profile/profiles": {
+            "get": {
+                "description": "Searches the Document by word",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profile Controller"
+                ],
+                "summary": "Searches the Document by word",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search document by word",
+                        "name": "search",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "specify limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "skip document",
+                        "name": "skip",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -148,12 +198,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Creates a document",
+                        "description": "Updates document",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBody"
+                            "$ref": "#/definitions/models.Profile"
                         }
                     }
                 ],
@@ -220,8 +270,12 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.RequestBody": {
+        "models.Profile": {
             "type": "object",
+            "required": [
+                "Email",
+                "password"
+            ],
             "properties": {
                 "Email": {
                     "type": "string"
@@ -232,9 +286,6 @@ const docTemplate = `{
                 "LastName": {
                     "type": "string"
                 },
-                "Pid": {
-                    "type": "string"
-                },
                 "password": {
                     "type": "string"
                 }
@@ -243,10 +294,7 @@ const docTemplate = `{
         "responses.ProfileResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
+                "data": {},
                 "message": {
                     "type": "string"
                 },

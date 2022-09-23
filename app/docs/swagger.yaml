@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  models.RequestBody:
+  models.Profile:
     properties:
       Email:
         type: string
@@ -8,16 +8,15 @@ definitions:
         type: string
       LastName:
         type: string
-      Pid:
-        type: string
       password:
         type: string
+    required:
+    - Email
+    - password
     type: object
   responses.ProfileResponse:
     properties:
-      data:
-        additionalProperties: true
-        type: object
+      data: {}
       message:
         type: string
       status:
@@ -45,9 +44,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              type: string
-            type: array
+            type: ""
       summary: Checks for service
       tags:
       - Health Check Controller
@@ -60,7 +57,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBody'
+          $ref: '#/definitions/models.Profile'
       produces:
       - application/json
       responses:
@@ -140,12 +137,12 @@ paths:
         name: id
         required: true
         type: string
-      - description: Creates a document
+      - description: Updates document
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBody'
+          $ref: '#/definitions/models.Profile'
       produces:
       - application/json
       responses:
@@ -162,6 +159,41 @@ paths:
         "500":
           description: Error while getting examples
       summary: Update Document
+      tags:
+      - Profile Controller
+  /api/v1/profile/profiles:
+    get:
+      description: Searches the Document by word
+      parameters:
+      - description: search document by word
+        in: query
+        name: search
+        required: true
+        type: string
+      - description: specify limit
+        in: query
+        name: limit
+        type: string
+      - description: skip document
+        in: query
+        name: skip
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.ProfileResponse'
+            type: array
+        "403":
+          description: Forbidden
+        "404":
+          description: Page Not found
+        "500":
+          description: Error while getting examples
+      summary: Searches the Document by word
       tags:
       - Profile Controller
 swagger: "2.0"
