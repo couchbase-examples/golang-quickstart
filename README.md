@@ -11,7 +11,7 @@ Full documentation can be found on the [Couchbase Developer Portal]().
 
 To run this prebuilt project, you will need:
 
-- Follow [Couchbase Installation Options](https://developer.couchbase.com/tutorial-couchbase-installation-options) for installing the lastest Couchbase Database Server Instance
+- Follow [Couchbase Installation Options](https://developer.couchbase.com/tutorial-couchbase-installation-options) for installing the lastest Couchbase Database Server Instance and [Get Started with Couchbase Capella](https://docs.couchbase.com/cloud/get-started/get-started.html) for more information about Couchbase Capella.
 - [Golang v1.19.x](https://go.dev/dl/) installed
 - Code Editor installed
 
