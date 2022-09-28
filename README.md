@@ -33,6 +33,9 @@ The bucket along with the scope and collection will be created on the cluster. F
 ```shell
 go run .
 ```
+
+Once the site is up and running, you can launch your browser and go to the [Swagger start page](http://127.0.0.1:8080/docs/index.html) to test the APIs.
+
 ### Running The Tests
 
 To run the standard integration tests, use the following commands:
