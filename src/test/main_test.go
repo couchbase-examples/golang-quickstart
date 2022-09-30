@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
-	"app/responses"
+	"src/responses"
 	"bytes"
 	"io/ioutil"
     "time"

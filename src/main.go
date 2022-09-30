@@ -1,13 +1,13 @@
 package main
 
 import (
-	"app/routes"
+	"src/routes"
 	"github.com/gin-gonic/gin"
-	_ "app/controllers"
-	_ "app/docs"
+	_ "src/controllers"
+	_ "src/docs"
 	//swaggerFiles "github.com/swaggo/files"
 	//ginSwagger "github.com/swaggo/gin-swagger"
-	_ "app/docs"
+	_ "src/docs"
 )
 
 // @title Go Profile API
