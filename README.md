@@ -11,25 +11,48 @@ Full documentation can be found on the [Couchbase Developer Portal]().
 
 To run this prebuilt project, you will need:
 
-- Follow [Couchbase Installation Options](https://developer.couchbase.com/tutorial-couchbase-installation-options) for installing the lastest Couchbase Database Server Instance and [Get Started with Couchbase Capella](https://docs.couchbase.com/cloud/get-started/get-started.html) for more information about Couchbase Capella.
+- Follow [Get Started with Couchbase Capella](https://docs.couchbase.com/cloud/get-started/get-started.html) for more information about Couchbase Capella.
+- Follow [Couchbase Installation Options](https://developer.couchbase.com/tutorial-couchbase-installation-options) for installing the latest Couchbase Database Server Instance
+- Basic knowledge of [Golang](https://go.dev/tour/welcome/1) and [Gin Gonic](https://gin-gonic.com/docs/)
 - [Golang v1.19.x](https://go.dev/dl/) installed
 - Code Editor installed
+- Note that this tutorial is designed to work with the latest Golang SDK (2.x) for Couchbase. It will not work with the older Golang SDK for Couchbase without adapting the code.
 
 ## Install Dependencies
 
-Any dependencies will be installed by running the go run command which installs the dependencies required from the go.mod file.
+Any dependencies will be installed by running the go run command, which installs any dependencies required from the go.mod file.
 
 ## Database Server Configuration
 
-All configuration for communication with the database is stored in the .env file.The default username is assumed to be `Administrator` and the default password is assumed to be `Password`. If these are different in your environment, you will need to change them before running the application in the .env file.
+All configuration for communication with the database is stored in the `.env` file. This includes the Connection string, username, password, bucket name, collection name and scope name. The default username is assumed to be `Administrator` and the default password is assumed to be `Password1$`. If these are different in your environment you will need to change them before running the application.
 
-Note: If you are running with [Couchbase Capella](https://cloud.couchbase.com/), the application requires the bucket and the database user to be setup from Capella Console. Also ensure that the bucket exists on the cluster and your [IP address is whitelisted](https://docs.couchbase.com/cloud/get-started/cluster-and-data.html#allowed) on the Cluster. In order to inialize the scope and collection in the Capella cluster, enable the commented out code in the Initialize_db() in the file db/db_init.go that is used to connect to Capella. Also Comment out the code to connect to Couchbase server locally.
+### Running Couchbase Capella
+
+When running Couchbase using Capella, the application requires the bucket and the database user to be setup from Capella Console. The directions for creating a bucket called `user_profile` can be found on the [documentation website](https://docs.couchbase.com/cloud/clusters/data-service/manage-buckets.html#add-bucket). Next, follow the directions for [Configure Database Credentials](https://docs.couchbase.com/cloud/clusters/manage-database-users.html) and name the username `Administrator` and password `Password1$`.
+
+Next, open the `.env` file. Locate CONNECTION_STRING and update it to match your Wide Area Network name found in the [Capella Portal UI Connect Tab](https://docs.couchbase.com/cloud/get-started/connect-to-cluster.html#connect-to-your-cluster-using-the-built-in-sdk-examples). Note that Capella uses TLS so the Connection string must start with couchbases://. Note that this configuration is designed for development environments only.
+
+```
+CONNECTION_STRING=couchbases://yourhostname.cloud.couchbase.com
+BUCKET=user_profile
+COLLECTION=default
+SCOPE=default
+USERNAME=Administrator
+PASSWORD=Password1$
+```
+
+### Running Couchbase Locally
+
+For local installation and Docker users, follow the directions found on the [documentation website](https://docs.couchbase.com/server/current/manage/manage-buckets/create-bucket.html) for creating a bucket called `user_profile`. Next, follow the directions for [Creating a user](); name the username `Administrator` and password `Password1$`. For this tutorial, make sure it has `Full Admin` rights so that the application can create collections and indexes.
+
+Next, open the `.env` file and validate that the configuration information matches your setup.
+
+> **NOTE:** For docker and local Couchbase installations, Couchbase must be installed and running on localhost (<http://127.0.0.1:8091>) prior to running the the Golang application.
 
 ### Running The Application
 
-At this point the application is ready. Make sure you are in the **app** directory. You can run it with the following commands from the terminal/command prompt:
+At this point the application is ready. Make sure you are in the src directory. You can run it with the following command from the terminal/command prompt:
 
-The bucket along with the scope and collection will be created on the cluster. For Capella, you need to ensure that the bucket is created before running the application.
 ```shell
 go run .
 ```
@@ -38,7 +61,7 @@ Once the site is up and running, you can launch your browser and go to the [Swag
 
 ### Running The Tests
 
-To run the standard integration tests, use the following commands:
+To run the standard integration tests, use the following commands from the src directory:
 
 ```bash
 cd test
@@ -47,4 +70,4 @@ go test -v
 
 ## Conclusion
 
-Setting up a basic REST API in Golang and Gin Gonic with Couchbase is fairly simple. In this project when ran with Couchbase Server 7 installed, it will create a bucket in Couchbase, an index for our parameterized [N1QL query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html), and showcases basic CRUD operations needed in most applications.
+Setting up a basic REST API in Golang and Gin Gonic with Couchbase is fairly simple,this project when run will showcase basic CRUD operations along with creating an index for our parameterized  [N1QL query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) which is used in most applications.
