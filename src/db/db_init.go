@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var Host_name = EnvCouchBase("DB_HOST")
+var Connection_string = EnvCouchBase("CONNECTION_STRING")
 var Username = EnvCouchBase("USERNAME")
 var Password = EnvCouchBase("PASSWORD")
 var Bucket_name = EnvCouchBase("BUCKET")
@@ -92,9 +92,9 @@ func Initialize_db() *gocb.Cluster {
 		},
 	}
 	//Connecting to Couchbase Server locally
-	cluster, err := gocb.Connect("couchbase://"+Host_name, clusterOpts)
+	cluster, err := gocb.Connect(Connection_string, clusterOpts)
 	//Connecting to Couchbase Capella
-	//cluster, err := gocb.Connect("couchbases://"+Host_name, clusterOpts)
+	//cluster, err := gocb.Connect(Connection_string, clusterOpts)
 	if err != nil {
 		panic(err)
 	}
