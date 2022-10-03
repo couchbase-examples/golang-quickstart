@@ -2,15 +2,16 @@ package controllers
 
 import (
 	"net/http"
-	"app/db"
-	"app/models"
-	"app/responses"
+	"src/db"
+	"src/models"
+	"src/responses"
 	"errors"
 	"github.com/couchbase/gocb/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
+	"fmt"
 )
 
 var cluster *gocb.Cluster = db.Initialize_db()
@@ -27,9 +28,9 @@ var collection_name = db.Collection_name
 // @Success      200  {}  time
 // @Router       /api/v1/health [get]
 func Healthcheck() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(context *gin.Context) {
 
-		c.JSON(http.StatusOK,
+		context.JSON(http.StatusOK,
 			time.Now())
 		return
 	}
@@ -47,13 +48,13 @@ func Healthcheck() gin.HandlerFunc {
 // @Failure 	 404			"Page Not found"
 // @Router       /api/v1/profile [post]
 func InsertProfile() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(context *gin.Context) {
 		var data models.RequestBody
 		var getDoc models.RequestBody
-		if err := c.BindJSON(&data); err != nil {
+		if err := context.BindJSON(&data); err != nil {
 			// DO SOMETHING WITH THE ERROR
 			//Error while getting request
-			c.JSON(http.StatusBadRequest, responses.ProfileResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", Profile: err.Error()})
+			context.JSON(http.StatusBadRequest, responses.ProfileResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", Profile: err.Error()})
 			return
 		}
 
@@ -74,10 +75,9 @@ func InsertProfile() gin.HandlerFunc {
 		//perform insert operation
 		result, err := col.Insert(profile_key, new_profile, nil)
 		_ =result
-		//fmt.Println(new_profile.LastName)
 		getResult, err := col.Get(profile_key, nil)
 		err = getResult.Content(&getDoc)
-		c.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Document successfully inserted", Profile: getDoc})
+		context.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Document successfully inserted", Profile: getDoc})
 
 	}
 }
@@ -93,12 +93,12 @@ func InsertProfile() gin.HandlerFunc {
 // @Failure 	 404			"Page Not found"
 // @Router       /api/v1/profile/{id} [get]
 func GetProfile() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		Pid := c.Param("id")
+	return func(context *gin.Context) {
+		Pid := context.Param("id")
 		var getDoc models.RequestBody
 		getResult, err := col.Get(Pid, nil)
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			c.JSON(http.StatusInternalServerError, responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document does not exist", Profile: err})
+			context.JSON(http.StatusNotFound, responses.ProfileResponse{Status: http.StatusNotFound, Message: "Error, Document does not exist", Profile: err})
 			return
 		}
 		err = getResult.Content(&getDoc)
@@ -106,7 +106,7 @@ func GetProfile() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully fetched Document", Profile: getDoc})
+		context.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully fetched Document", Profile: getDoc})
 
 	}
 
@@ -124,11 +124,11 @@ func GetProfile() gin.HandlerFunc {
 // @Failure 	 404			"Page Not found"
 // @Router       /api/v1/profile/{id} [put]
 func UpdateProfile() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(context *gin.Context) {
 		var data models.RequestBody
-		profile_id := c.Param("id")
-		if err := c.BindJSON(&data); err != nil {
-			c.JSON(http.StatusBadRequest, responses.ProfileResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", Profile: err.Error()})
+		profile_id := context.Param("id")
+		if err := context.BindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, responses.ProfileResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", Profile: err.Error()})
 			return
 
 		}
@@ -142,13 +142,13 @@ func UpdateProfile() gin.HandlerFunc {
 
 		_, err := col.Upsert(profile_id, data, nil)
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			c.JSON(http.StatusInternalServerError, responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document with the key does not exist", Profile: err.Error()})
+			context.JSON(http.StatusNotFound, responses.ProfileResponse{Status: http.StatusNotFound, Message: "Error, Document with the key does not exist", Profile: err.Error()})
 			return
 
 		}
 		getResult, err := col.Get(profile_id, nil)
 		err = getResult.Content(&getDoc)
-		c.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully Updated the document", Profile: getDoc})
+		context.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully Updated the document", Profile: getDoc})
 	}
 
 }
@@ -164,15 +164,15 @@ func UpdateProfile() gin.HandlerFunc {
 // @Failure 	 404			"Page Not found"
 // @Router       /api/v1/profile/{id} [delete]
 func DeleteProfile() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		profile_id := c.Param("id")
+	return func(context *gin.Context) {
+		profile_id := context.Param("id")
 		result, err := col.Remove(profile_id, nil)
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			c.JSON(http.StatusInternalServerError, responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document Not found with the specified key", Profile: err.Error()})
+			context.JSON(http.StatusInternalServerError, responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document Not found with the specified key", Profile: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully deleted the document", Profile: result})
+		context.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully deleted the document", Profile: result})
 
 	}
 
@@ -191,10 +191,10 @@ func DeleteProfile() gin.HandlerFunc {
 // @Failure 	 404			"Page Not found"
 // @Router       /api/v1/profile/profiles [get]
 func SearchProfile() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		search := c.Query("search")
-		limit := c.Query("limit")
-		skip := c.Query("skip")
+	return func(context *gin.Context) {
+		search := context.Query("search")
+		limit := context.Query("limit")
+		skip := context.Query("skip")
 		if limit == "" {
 			limit = "5"
 		}
@@ -202,7 +202,8 @@ func SearchProfile() gin.HandlerFunc {
 			skip = "0"
 		}
 		var search_query = search
-		var query = "SELECT p.* FROM " + bucket_name + "." + scope_name + "." + collection_name + " p WHERE lower(p.FirstName) LIKE " + "'" + search_query + "%'" + " OR lower(p.LastName) LIKE " + "'" + search_query + "%'" + " LIMIT " + limit + " OFFSET " + skip + ";"
+		//var query2 = "SELECT p.* FROM " + bucket_name + "." + scope_name + "." + collection_name + " p WHERE lower(p.FirstName) LIKE " + "'" + search_query + "%'" + " OR lower(p.LastName) LIKE " + "'" + search_query + "%'" + " LIMIT " + limit + " OFFSET " + skip + ";"
+		query:= fmt.Sprintf("SELECT p.* FROM %s.%s.%s p WHERE lower(p.FirstName) LIKE '%s' OR lower(p.LastName) LIKE '%s' LIMIT %s OFFSET %s%s",bucket_name,scope_name,collection_name,search_query,search_query,limit,skip,";")
 		results, err := cluster.Query(query, nil)
 		var s interface{}
 		var profiles []interface{}
@@ -218,9 +219,9 @@ func SearchProfile() gin.HandlerFunc {
 
 		}
 		if s != nil {
-			c.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully found the  the document", Profile: profiles})
+			context.JSON(http.StatusOK, responses.ProfileResponse{Status: http.StatusOK, Message: "Successfully found the  the document", Profile: profiles})
 		} else {
-			c.JSON(http.StatusInternalServerError, responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document Not found with the search query specified", Profile: profiles})
+			context.JSON(http.StatusInternalServerError, responses.ProfileResponse{Status: http.StatusInternalServerError, Message: "Error, Document Not found with the search query specified", Profile: profiles})
 		}
 
 	}
