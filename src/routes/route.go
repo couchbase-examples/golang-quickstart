@@ -6,6 +6,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/gin-contrib/cors"
+	"net/http"
 )
 
 func Profileroute(router *gin.Engine) {
@@ -22,6 +23,9 @@ func Profileroute(router *gin.Engine) {
 	router.DELETE("api/v1/profile/:id", controllers.DeleteProfile())
 	//swagger UI
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET("/", func(context *gin.Context) {
+		context.Redirect(http.StatusFound, "/docs/index.html")
+	})
 	//search
 	router.GET("api/v1/profile/profiles", controllers.SearchProfile())
 
