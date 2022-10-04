@@ -9,17 +9,17 @@ RUN apt-get -qq update && \
     apt-get install -yq sudo git wget
 
 RUN cd /tmp && \
-    wget --no-check-certificate https://golang.org/dl/go1.17.2.linux-amd64.tar.gz && \
-tar -xzf go1.17.2.linux-amd64.tar.gz && \
-mv go /usr/local/go && \
-echo 'export PATH=$PATH:/usr/local/go/bin && \
-export GOPATH=/var/www/go && \
-export PATH=$PATH:$GOPATH/bin' >> /etc/profile && \
-. /etc/profile && \
-mkdir -p $GOPATH/src && \
-mkdir -p $GOPATH/bin && \
-mkdir -p $GOPATH/pkg && \
-go version
+    wget --no-check-certificate https://golang.org/dl/go1.19.1.linux-amd64.tar.gz && \
+    tar -xzf go1.19.1.linux-amd64.tar.gz && \
+    mv go /usr/local/go && \
+    echo 'export PATH=$PATH:/usr/local/go/bin && \
+    export GOPATH=/var/www/go && \
+    export PATH=$PATH:$GOPATH/bin' >> /etc/profile && \
+    . /etc/profile && \
+    mkdir -p $GOPATH/src && \
+    mkdir -p $GOPATH/bin && \
+    mkdir -p $GOPATH/pkg && \
+    go version
 
       
 
