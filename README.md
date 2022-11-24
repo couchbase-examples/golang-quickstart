@@ -5,7 +5,7 @@
 > This repo is designed to teach you how to connect to a Couchbase cluster to create, read, update, and delete documents and how to write simple parametrized N1QL queries.
 
 
-Full documentation can be found on the [Couchbase Developer Portal]().
+Full documentation can be found on the [Couchbase Developer Portal](https://developer.couchbase.com/tutorial-quickstart-golang-gin-gonic).
 
 ## Prerequisites
 
