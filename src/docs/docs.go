@@ -24,6 +24,325 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/airline/{id}": {
+            "get": {
+                "description": "Gets a document from the \"airline\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Get Airline Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search document by ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Airline Document ID not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates a document in the \"airline\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Update Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Update document by ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updates document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestBodyForAirline"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Inserts a document into the \"airline\" collection.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Insert Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Create document by specifying ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to create a new document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestBodyForAirline"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Airline document already exists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a document in the \"airline\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Delete Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Deletes a document with the specified key",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Airline Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airport/{id}": {
+            "get": {
+                "description": "Gets a document from the \"airport\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Get Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search document by ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Airport Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates a document in the \"airport\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Update Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Update document by id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updates document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestBodyForAirport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Inserts a document to the \"airport\" collection.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Insert Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Create document by specifying ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to create a document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestBodyForAirport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Airport Document already exists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a document in the \"airport\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Deletes Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Deletes a document with key specified",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Airport Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/api/v1/health": {
             "get": {
                 "description": "Checks if service is running",
@@ -44,110 +363,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/profile": {
-            "post": {
-                "description": "Creates the Document with key",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Profile Controller"
-                ],
-                "summary": "Create Document",
-                "parameters": [
-                    {
-                        "description": "Creates a document",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Profile"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.ProfileResponse"
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Page Not found"
-                    },
-                    "500": {
-                        "description": "Error while getting examples"
-                    }
-                }
-            }
-        },
-        "/api/v1/profile/profiles": {
+        "/api/v1/route/{id}": {
             "get": {
-                "description": "Searches the Document by word",
+                "description": "Gets a document from the \"route\" collection based on the provided key.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Profile Controller"
-                ],
-                "summary": "Searches the Document by word",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "search document by word",
-                        "name": "search",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "specify limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "skip document",
-                        "name": "skip",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.ProfileResponse"
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Page Not found"
-                    },
-                    "500": {
-                        "description": "Error while getting examples"
-                    }
-                }
-            }
-        },
-        "/api/v1/profile/{id}": {
-            "get": {
-                "description": "Gets the Document with key",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Profile Controller"
+                    "Route collection"
                 ],
                 "summary": "Get Document",
                 "parameters": [
@@ -165,28 +388,25 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.ProfileResponse"
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
                             }
                         }
                     },
-                    "403": {
-                        "description": "Forbidden"
-                    },
                     "404": {
-                        "description": "Page Not found"
+                        "description": "Route Document ID Not Found"
                     },
                     "500": {
-                        "description": "Error while getting examples"
+                        "description": "Internal Server Error"
                     }
                 }
             },
             "put": {
-                "description": "Updates the Document with key",
+                "description": "Updates a document in the \"route\" collection based on the provided key.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Profile Controller"
+                    "Route collection"
                 ],
                 "summary": "Update Document",
                 "parameters": [
@@ -203,7 +423,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Profile"
+                            "$ref": "#/definitions/models.RequestBodyForRoute"
                         }
                     }
                 ],
@@ -213,28 +433,70 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.ProfileResponse"
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
                             }
                         }
                     },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Page Not found"
+                    "400": {
+                        "description": "Bad Request"
                     },
                     "500": {
-                        "description": "Error while getting examples"
+                        "description": "Internal Server Error"
                     }
                 }
             },
-            "delete": {
-                "description": "Deletes the Document with key",
+            "post": {
+                "description": "Inserts a document to the \"route\" collection.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Profile Controller"
+                    "Route collection"
+                ],
+                "summary": "Insert Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Create document by specifying ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to create a document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestBodyForRoute"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Route Document already exists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a document in the \"route\" collection based on the provided key.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Route collection"
                 ],
                 "summary": "Deletes Document",
                 "parameters": [
@@ -247,51 +509,132 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.ProfileResponse"
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
                             }
                         }
                     },
-                    "403": {
-                        "description": "Forbidden"
-                    },
                     "404": {
-                        "description": "Page Not found"
+                        "description": "Route Document ID Not Found"
                     },
                     "500": {
-                        "description": "Error while getting examples"
+                        "description": "Internal Server Error"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "models.Profile": {
+        "models.RequestBodyForAirline": {
             "type": "object",
             "required": [
-                "Email",
-                "password"
+                "country",
+                "icao",
+                "name"
             ],
             "properties": {
-                "Email": {
+                "callsign": {
                     "type": "string"
                 },
-                "FirstName": {
+                "country": {
                     "type": "string"
                 },
-                "LastName": {
+                "iata": {
                     "type": "string"
                 },
-                "password": {
+                "icao": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
         },
-        "responses.ProfileResponse": {
+        "models.RequestBodyForAirport": {
+            "type": "object",
+            "properties": {
+                "airportname": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "faa": {
+                    "type": "string"
+                },
+                "geo": {
+                    "type": "object",
+                    "properties": {
+                        "alt": {
+                            "type": "number"
+                        },
+                        "lat": {
+                            "type": "number"
+                        },
+                        "lon": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "icao": {
+                    "type": "string"
+                },
+                "tz": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RequestBodyForRoute": {
+            "type": "object",
+            "properties": {
+                "airline": {
+                    "type": "string"
+                },
+                "airlineid": {
+                    "type": "string"
+                },
+                "destinationairport": {
+                    "type": "string"
+                },
+                "distance": {
+                    "type": "number"
+                },
+                "equipment": {
+                    "type": "string"
+                },
+                "schedule": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "day": {
+                                "type": "integer"
+                            },
+                            "flight": {
+                                "type": "string"
+                            },
+                            "utc": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "sourceairport": {
+                    "type": "string"
+                },
+                "stops": {
+                    "type": "integer"
+                }
+            }
+        },
+        "responses.TravelSampleResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -313,7 +656,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Go Profile API",
-	Description:      "Couchbase Golang Quickstart using Gin Gonic",
+	Description:      "Couchbase Golang Quickstart using Gin Gonic. This API provides CRUD operations for three collections in the database.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

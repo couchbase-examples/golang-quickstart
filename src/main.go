@@ -1,32 +1,30 @@
 package main
 
 import (
-	"src/routes"
-	"github.com/gin-gonic/gin"
-	_ "src/controllers"
-	_ "src/docs"
-	//swaggerFiles "github.com/swaggo/files"
-	//ginSwagger "github.com/swaggo/gin-swagger"
-	_ "src/docs"
+    "src/routes"
+    "github.com/gin-gonic/gin"
+    _ "src/controllers"
+    _ "src/docs"
+    //swaggerFiles "github.com/swaggo/files"
+    //ginSwagger "github.com/swaggo/gin-swagger"
+    _ "src/docs"
 )
 
 // @title Go Profile API
 // @version 1.0
-// @description Couchbase Golang Quickstart using Gin Gonic
+// @description Couchbase Golang Quickstart using Gin Gonic. This API provides CRUD operations for three collections in the database.
+// You can create, retrieve, update, and delete records in these collections.
 // @contact.name API Support
 // @contact.url http://www.swagger.io/support
 // @contact.email support@swagger.io
-
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
-
-
 // @query.collection.format multi
 
 func main() {
-	router := gin.Default()
+    router := gin.Default()
 
-	routes.Profileroute(router)
+    routes.Profileroute(router)
 
-	router.Run()
+    router.Run()
 }

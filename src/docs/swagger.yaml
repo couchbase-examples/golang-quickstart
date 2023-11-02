@@ -1,19 +1,74 @@
 definitions:
-  models.Profile:
+  models.RequestBodyForAirline:
     properties:
-      Email:
+      callsign:
         type: string
-      FirstName:
+      country:
         type: string
-      LastName:
+      iata:
         type: string
-      password:
+      icao:
+        type: string
+      name:
         type: string
     required:
-    - Email
-    - password
+    - country
+    - icao
+    - name
     type: object
-  responses.ProfileResponse:
+  models.RequestBodyForAirport:
+    properties:
+      airportname:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      faa:
+        type: string
+      geo:
+        properties:
+          alt:
+            type: number
+          lat:
+            type: number
+          lon:
+            type: number
+        type: object
+      icao:
+        type: string
+      tz:
+        type: string
+    type: object
+  models.RequestBodyForRoute:
+    properties:
+      airline:
+        type: string
+      airlineid:
+        type: string
+      destinationairport:
+        type: string
+      distance:
+        type: number
+      equipment:
+        type: string
+      schedule:
+        items:
+          properties:
+            day:
+              type: integer
+            flight:
+              type: string
+            utc:
+              type: string
+          type: object
+        type: array
+      sourceairport:
+        type: string
+      stops:
+        type: integer
+    type: object
+  responses.TravelSampleResponse:
     properties:
       data: {}
       message:
@@ -26,13 +81,232 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: Couchbase Golang Quickstart using Gin Gonic
+  description: Couchbase Golang Quickstart using Gin Gonic. This API provides CRUD
+    operations for three collections in the database.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
   title: Go Profile API
   version: "1.0"
 paths:
+  /api/v1/airline/{id}:
+    delete:
+      description: Deletes a document in the "airline" collection based on the provided
+        key.
+      parameters:
+      - description: Deletes a document with the specified key
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/responses.TravelSampleResponse'
+        "404":
+          description: Airline Document ID Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete Document
+      tags:
+      - Airline collection
+    get:
+      description: Gets a document from the "airline" collection based on the provided
+        key.
+      parameters:
+      - description: Search document by ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.TravelSampleResponse'
+        "404":
+          description: Airline Document ID not found
+        "500":
+          description: Internal Server Error
+      summary: Get Airline Document
+      tags:
+      - Airline collection
+    post:
+      description: Inserts a document into the "airline" collection.
+      parameters:
+      - description: Create document by specifying ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data to create a new document
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestBodyForAirline'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responses.TravelSampleResponse'
+        "400":
+          description: Bad Request
+        "409":
+          description: Airline document already exists
+        "500":
+          description: Internal Server Error
+      summary: Insert Document
+      tags:
+      - Airline collection
+    put:
+      description: Updates a document in the "airline" collection based on the provided
+        key.
+      parameters:
+      - description: Update document by ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updates document
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestBodyForAirline'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.TravelSampleResponse'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Update Document
+      tags:
+      - Airline collection
+  /api/v1/airport/{id}:
+    delete:
+      description: Deletes a document in the "airport" collection based on the provided
+        key.
+      parameters:
+      - description: Deletes a document with key specified
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            items:
+              $ref: '#/definitions/responses.TravelSampleResponse'
+            type: array
+        "404":
+          description: Airport Document ID Not Found
+        "500":
+          description: Internal Server Error
+      summary: Deletes Document
+      tags:
+      - Airport collection
+    get:
+      description: Gets a document from the "airport" collection based on the provided
+        key.
+      parameters:
+      - description: Search document by ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.TravelSampleResponse'
+        "404":
+          description: Airport Document ID Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get Document
+      tags:
+      - Airport collection
+    post:
+      description: Inserts a document to the "airport" collection.
+      parameters:
+      - description: Create document by specifying ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data to create a document
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestBodyForAirport'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responses.TravelSampleResponse'
+        "400":
+          description: Bad Request
+        "409":
+          description: Airport Document already exists
+        "500":
+          description: Internal Server Error
+      summary: Insert Document
+      tags:
+      - Airport collection
+    put:
+      description: Updates a document in the "airport" collection based on the provided
+        key.
+      parameters:
+      - description: Update document by id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updates document
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestBodyForAirport'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.TravelSampleResponse'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Update Document
+      tags:
+      - Airport collection
   /api/v1/health:
     get:
       description: Checks if service is running
@@ -46,37 +320,10 @@ paths:
       summary: Checks for service
       tags:
       - Health Check Controller
-  /api/v1/profile:
-    post:
-      description: Creates the Document with key
-      parameters:
-      - description: Creates a document
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/models.Profile'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/responses.ProfileResponse'
-            type: array
-        "403":
-          description: Forbidden
-        "404":
-          description: Page Not found
-        "500":
-          description: Error while getting examples
-      summary: Create Document
-      tags:
-      - Profile Controller
-  /api/v1/profile/{id}:
+  /api/v1/route/{id}:
     delete:
-      description: Deletes the Document with key
+      description: Deletes a document in the "route" collection based on the provided
+        key.
       parameters:
       - description: Deletes a document with key specified
         in: path
@@ -86,23 +333,22 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             items:
-              $ref: '#/definitions/responses.ProfileResponse'
+              $ref: '#/definitions/responses.TravelSampleResponse'
             type: array
-        "403":
-          description: Forbidden
         "404":
-          description: Page Not found
+          description: Route Document ID Not Found
         "500":
-          description: Error while getting examples
+          description: Internal Server Error
       summary: Deletes Document
       tags:
-      - Profile Controller
+      - Route collection
     get:
-      description: Gets the Document with key
+      description: Gets a document from the "route" collection based on the provided
+        key.
       parameters:
       - description: search document by id
         in: path
@@ -116,19 +362,48 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.ProfileResponse'
+              $ref: '#/definitions/responses.TravelSampleResponse'
             type: array
-        "403":
-          description: Forbidden
         "404":
-          description: Page Not found
+          description: Route Document ID Not Found
         "500":
-          description: Error while getting examples
+          description: Internal Server Error
       summary: Get Document
       tags:
-      - Profile Controller
+      - Route collection
+    post:
+      description: Inserts a document to the "route" collection.
+      parameters:
+      - description: Create document by specifying ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data to create a document
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestBodyForRoute'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responses.TravelSampleResponse'
+        "400":
+          description: Bad Request
+        "409":
+          description: Route Document already exists
+        "500":
+          description: Internal Server Error
+      summary: Insert Document
+      tags:
+      - Route collection
     put:
-      description: Updates the Document with key
+      description: Updates a document in the "route" collection based on the provided
+        key.
       parameters:
       - description: Update document by id
         in: path
@@ -140,7 +415,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.Profile'
+          $ref: '#/definitions/models.RequestBodyForRoute'
       produces:
       - application/json
       responses:
@@ -148,50 +423,13 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.ProfileResponse'
+              $ref: '#/definitions/responses.TravelSampleResponse'
             type: array
-        "403":
-          description: Forbidden
-        "404":
-          description: Page Not found
+        "400":
+          description: Bad Request
         "500":
-          description: Error while getting examples
+          description: Internal Server Error
       summary: Update Document
       tags:
-      - Profile Controller
-  /api/v1/profile/profiles:
-    get:
-      description: Searches the Document by word
-      parameters:
-      - description: search document by word
-        in: query
-        name: search
-        required: true
-        type: string
-      - description: specify limit
-        in: query
-        name: limit
-        type: string
-      - description: skip document
-        in: query
-        name: skip
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/responses.ProfileResponse'
-            type: array
-        "403":
-          description: Forbidden
-        "404":
-          description: Page Not found
-        "500":
-          description: Error while getting examples
-      summary: Searches the Document by word
-      tags:
-      - Profile Controller
+      - Route collection
 swagger: "2.0"
