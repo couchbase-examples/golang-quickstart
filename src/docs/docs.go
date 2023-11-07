@@ -24,6 +24,94 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/airline/list": {
+            "get": {
+                "description": "Get a list of airlines filtered by country",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Get Airlines by Country",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by country. Example: 'France'",
+                        "name": "country",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to return (page size). Example: 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to skip (for pagination). Example: 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airline/to-airport": {
+            "get": {
+                "description": "Get a list of airlines flying to a specific airport",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Get Airlines Flying to Airport",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Destination airport. Example: 'JFK'",
+                        "name": "airport",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to return (page size). Example: 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to skip (for pagination). Example: 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/api/v1/airline/{id}": {
             "get": {
                 "description": "Gets a document from the \"airline\" collection based on the provided key.",
@@ -37,7 +125,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Search document by ID",
+                        "description": "Get document by ID.    Example: 'airline_123'",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -70,7 +158,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update document by ID",
+                        "description": "Update document by ID.    Example: 'airline_123'",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -115,7 +203,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Create document by specifying ID",
+                        "description": "Create document by specifying ID.    Example: airline_123",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -134,7 +222,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "$ref": "#/definitions/responses.TravelSampleResponseForAirline"
                         }
                     },
                     "400": {
@@ -160,7 +248,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Deletes a document with the specified key",
+                        "description": "Deletes a document with the specified key. Example: 'sample_id'",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -182,20 +270,114 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/airport/{id}": {
+        "/api/v1/airport/direct-connections": {
             "get": {
-                "description": "Gets a document from the \"airport\" collection based on the provided key.",
+                "description": "Get Direct Connections from specified Airport",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Airport collection"
                 ],
-                "summary": "Get Document",
+                "summary": "Get Direct Connections from Airport",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Search document by ID",
+                        "description": "Source airport       Example: SFO, LHR, CDG",
+                        "name": "airport",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of direct connections to return (page size)      Default value : 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of direct connections to skip (for pagination)  Default value : 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airport/list": {
+            "get": {
+                "description": "Get list of Airports. Optionally, you can filter the list by Country",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "List Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Country     Example: United Kingdom, France, United States",
+                        "name": "country",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airports to return (page size)     Default value : 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airports to skip (for pagination)     Default value : 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airport/{id}": {
+            "get": {
+                "description": "Get Airport with specified ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Get Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search document by ID    Example: airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -217,18 +399,18 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Updates a document in the \"airport\" collection based on the provided key.",
+                "description": "Update Airport with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Airport collection"
                 ],
-                "summary": "Update Document",
+                "summary": "Update Airport Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update document by id",
+                        "description": "Update document by id         Example: airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -262,18 +444,18 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Inserts a document to the \"airport\" collection.",
+                "description": "Create Airport with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Airport collection"
                 ],
-                "summary": "Insert Document",
+                "summary": "Insert Airport Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Create document by specifying ID",
+                        "description": "Create document by specifying ID      Example: airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -307,18 +489,18 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes a document in the \"airport\" collection based on the provided key.",
+                "description": "Delete Airport with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Airport collection"
                 ],
-                "summary": "Deletes Document",
+                "summary": "Deletes Airport Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Deletes a document with key specified",
+                        "description": "Deletes a document with key specified      Example: airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -339,26 +521,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error"
-                    }
-                }
-            }
-        },
-        "/api/v1/health": {
-            "get": {
-                "description": "Checks if service is running",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Health Check Controller"
-                ],
-                "summary": "Checks for service",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": ""
-                        }
                     }
                 }
             }
@@ -538,36 +700,51 @@ const docTemplate = `{
             ],
             "properties": {
                 "callsign": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "SampleCallsign"
                 },
                 "country": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "SampleCountry"
                 },
                 "iata": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "SMP"
                 },
                 "icao": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "SMPL"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "SampleName"
                 }
             }
         },
         "models.RequestBodyForAirport": {
             "type": "object",
+            "required": [
+                "airportname",
+                "city",
+                "country",
+                "faa"
+            ],
             "properties": {
                 "airportname": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SampleAirport"
                 },
                 "city": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SampleCity"
                 },
                 "country": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "United Kingdom"
                 },
                 "faa": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SAA"
                 },
                 "geo": {
                     "type": "object",
@@ -584,10 +761,12 @@ const docTemplate = `{
                     }
                 },
                 "icao": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SAAA"
                 },
                 "tz": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Europe/Paris"
                 }
             }
         },
@@ -645,6 +824,22 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "responses.TravelSampleResponseForAirline": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.RequestBodyForAirline"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 200
+                }
+            }
         }
     }
 }`
@@ -655,8 +850,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Go Profile API",
-	Description:      "Couchbase Golang Quickstart using Gin Gonic. This API provides CRUD operations for three collections in the database.",
+	Title:            "Golang Quickstart using Gin Gonic",
+	Description:      "Couchbase Golang Quickstart using Gin Gonic. This API provides operations for multiple collections in the database, including CRUD operations and query examples.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
