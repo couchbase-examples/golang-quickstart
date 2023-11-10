@@ -1,27 +1,27 @@
 definitions:
-  models.RequestBodyForAirline:
+  models.Airline:
     properties:
       callsign:
-        default: SampleCallsign
+        example: SAF
         type: string
       country:
-        default: SampleCountry
+        example: United States
         type: string
       iata:
-        default: SMP
+        example: SA
         type: string
       icao:
-        default: SMPL
+        example: SAF
         type: string
       name:
-        default: SampleName
+        example: SampleName
         type: string
     required:
     - country
     - icao
     - name
     type: object
-  models.RequestBodyForAirport:
+  models.Airport:
     properties:
       airportname:
         example: SampleAirport
@@ -36,14 +36,7 @@ definitions:
         example: SAA
         type: string
       geo:
-        properties:
-          alt:
-            type: number
-          lat:
-            type: number
-          lon:
-            type: number
-        type: object
+        $ref: '#/definitions/models.Geo'
       icao:
         example: SAAA
         type: string
@@ -56,73 +49,91 @@ definitions:
     - country
     - faa
     type: object
-  models.RequestBodyForRoute:
+  models.Destination:
+    properties:
+      destinationairport:
+        example: JFK
+        type: string
+    type: object
+  models.Geo:
+    properties:
+      alt:
+        example: 48.864716
+        type: number
+      lat:
+        example: 2.349014
+        type: number
+      lon:
+        example: 92
+        type: number
+    type: object
+  models.Route:
     properties:
       airline:
+        example: AF
         type: string
-      airlineid:
+      airline_id:
+        example: airline_10
         type: string
       destinationairport:
+        example: JFK
         type: string
       distance:
+        example: 4151.79
         type: number
       equipment:
+        example: CRJ
         type: string
       schedule:
         items:
-          properties:
-            day:
-              type: integer
-            flight:
-              type: string
-            utc:
-              type: string
-          type: object
+          $ref: '#/definitions/models.Schedule'
         type: array
       sourceairport:
+        example: SFO
         type: string
       stops:
+        example: 0
         type: integer
+    required:
+    - airline
+    - airline_id
+    - destinationairport
+    - sourceairport
     type: object
-  responses.TravelSampleResponse:
+  models.Schedule:
     properties:
-      data: {}
-      message:
-        type: string
-      status:
+      day:
+        example: 1
         type: integer
-    type: object
-  responses.TravelSampleResponseForAirline:
-    properties:
-      data:
-        $ref: '#/definitions/models.RequestBodyForAirline'
-      message:
-        example: Success
+      flight:
+        example: XYZ123
         type: string
-      status:
-        example: 200
-        type: integer
+      utc:
+        example: "14:30"
+        type: string
     type: object
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: Couchbase Golang Quickstart using Gin Gonic. This API provides operations
-    for multiple collections in the database, including CRUD operations and query
-    examples.
-  license:
-    name: MIT
-    url: https://opensource.org/licenses/MIT
+  contact: {}
+  description: |2-
+
+    This API provides operations for multiple collections in the database, including CRUD operations and query examples.
+    We have a visual representation of the API documentation using Swagger, which allows you to interact with the API's endpoints directly through the browser. It provides a clear view of the API, including endpoints, HTTP methods, request parameters, and response objects.
+    Click on an individual endpoint to expand it and see detailed information. This includes the endpoint's description, possible response status codes, and the request parameters it accepts.
+    Trying Out the API
+    You can try out an API by clicking on the "Try it out" button next to the endpoints.
+    - Parameters: If an endpoint requires parameters, Swagger UI provides input boxes for you to fill in. This could include path parameters, query strings, headers, or the body of a POST/PUT request.
+    - Execution: Once you've inputted all the necessary parameters, you can click the "Execute" button to make a live API call. Swagger UI will send the request to the API and display the response directly in the documentation. This includes the response code, response headers, and response body.
+    Models
+    <div style="float: left;">Swagger documents the structure of request and response bodies using models. These models define the expected data structure using JSON schema and are extremely helpful in understanding what data to send and expect.
+    For details on the API, please check the tutorial on the Couchbase Developer Portal: https://developer.couchbase.com/tutorial-quickstart-golang-gin-gonic
   title: Golang Quickstart using Gin Gonic
   version: "1.0"
 paths:
   /api/v1/airline/{id}:
     delete:
-      description: Deletes a document in the "airline" collection based on the provided
-        key.
+      description: Delete Airline with specified ID
       parameters:
-      - description: 'Deletes a document with the specified key. Example: ''sample_id'''
+      - description: Airline ID like airline_10
         in: path
         name: id
         required: true
@@ -131,9 +142,7 @@ paths:
       - application/json
       responses:
         "204":
-          description: No Content
-          schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+          description: Airline deleted
         "404":
           description: Airline Document ID Not Found
         "500":
@@ -142,10 +151,9 @@ paths:
       tags:
       - Airline collection
     get:
-      description: Gets a document from the "airline" collection based on the provided
-        key.
+      description: Get Airline with specified ID
       parameters:
-      - description: 'Get document by ID.    Example: ''airline_123'''
+      - description: Airline ID like airline_10
         in: path
         name: id
         required: true
@@ -156,7 +164,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+            $ref: '#/definitions/models.Airline'
         "404":
           description: Airline Document ID not found
         "500":
@@ -165,9 +173,9 @@ paths:
       tags:
       - Airline collection
     post:
-      description: Inserts a document into the "airline" collection.
+      description: Create Airline with specified ID
       parameters:
-      - description: 'Create document by specifying ID.    Example: airline_123'
+      - description: Airline ID like airline_10
         in: path
         name: id
         required: true
@@ -177,14 +185,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBodyForAirline'
+          $ref: '#/definitions/models.Airline'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponseForAirline'
+            $ref: '#/definitions/models.Airline'
         "400":
           description: Bad Request
         "409":
@@ -195,10 +203,9 @@ paths:
       tags:
       - Airline collection
     put:
-      description: Updates a document in the "airline" collection based on the provided
-        key.
+      description: Update Airline with specified ID
       parameters:
-      - description: 'Update document by ID.    Example: ''airline_123'''
+      - description: Airline ID like airline_10
         in: path
         name: id
         required: true
@@ -208,16 +215,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBodyForAirline'
+          $ref: '#/definitions/models.Airline'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
-            type: array
+            $ref: '#/definitions/models.Airline'
         "400":
           description: Bad Request
         "500":
@@ -227,18 +232,18 @@ paths:
       - Airline collection
   /api/v1/airline/list:
     get:
-      description: Get a list of airlines filtered by country
+      description: Get list of Airlines. Optionally, you can filter the list by Country
       parameters:
-      - description: 'Filter by country. Example: ''France'''
+      - description: 'Filter by country<br>Example: France, United Kingdom, United
+          States'
         in: query
         name: country
-        required: true
         type: string
-      - description: 'Number of airlines to return (page size). Example: 10'
+      - description: 'Number of airlines to return (page size).<br>Example: 10'
         in: query
         name: limit
         type: integer
-      - description: 'Number of airlines to skip (for pagination). Example: 0'
+      - description: 'Number of airlines to skip (for pagination).<br>Example: 0'
         in: query
         name: offset
         type: integer
@@ -248,7 +253,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+            items:
+              $ref: '#/definitions/models.Airline'
+            type: array
         "500":
           description: Internal Server Error
       summary: Get Airlines by Country
@@ -256,18 +263,20 @@ paths:
       - Airline collection
   /api/v1/airline/to-airport:
     get:
-      description: Get a list of airlines flying to a specific airport
+      description: Get Airlines flying to specified destination Airport
       parameters:
-      - description: 'Destination airport. Example: ''JFK'''
+      - description: 'Destination airport<br>Example : SFO, JFK, LAX'
         in: query
         name: airport
         required: true
         type: string
-      - description: 'Number of airlines to return (page size). Example: 10'
+      - description: 'Number of airlines to return (page size)<br>Default value :
+          10'
         in: query
         name: limit
         type: integer
-      - description: 'Number of airlines to skip (for pagination). Example: 0'
+      - description: 'Number of airlines to skip (for pagination)<br>Default value
+          : 0'
         in: query
         name: offset
         type: integer
@@ -277,7 +286,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+            items:
+              $ref: '#/definitions/models.Airline'
+            type: array
         "500":
           description: Internal Server Error
       summary: Get Airlines Flying to Airport
@@ -287,7 +298,7 @@ paths:
     delete:
       description: Delete Airport with specified ID
       parameters:
-      - description: 'Deletes a document with key specified      Example: airport_1273'
+      - description: Airport ID like airport_1273
         in: path
         name: id
         required: true
@@ -296,11 +307,7 @@ paths:
       - application/json
       responses:
         "204":
-          description: No Content
-          schema:
-            items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
-            type: array
+          description: Airport deleted
         "404":
           description: Airport Document ID Not Found
         "500":
@@ -311,7 +318,7 @@ paths:
     get:
       description: Get Airport with specified ID
       parameters:
-      - description: 'Search document by ID    Example: airport_1273'
+      - description: Airport ID like airport_1273
         in: path
         name: id
         required: true
@@ -322,7 +329,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+            $ref: '#/definitions/models.Airport'
         "404":
           description: Airport Document ID Not Found
         "500":
@@ -333,7 +340,7 @@ paths:
     post:
       description: Create Airport with specified ID
       parameters:
-      - description: 'Create document by specifying ID      Example: airport_1273'
+      - description: Airport ID like airport_1273
         in: path
         name: id
         required: true
@@ -343,14 +350,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBodyForAirport'
+          $ref: '#/definitions/models.Airport'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+            $ref: '#/definitions/models.Airport'
         "400":
           description: Bad Request
         "409":
@@ -363,7 +370,7 @@ paths:
     put:
       description: Update Airport with specified ID
       parameters:
-      - description: 'Update document by id         Example: airport_1273'
+      - description: Airport ID like airport_1273
         in: path
         name: id
         required: true
@@ -373,16 +380,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBodyForAirport'
+          $ref: '#/definitions/models.Airport'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
-            type: array
+            $ref: '#/definitions/models.Airport'
         "400":
           description: Bad Request
         "500":
@@ -394,17 +399,17 @@ paths:
     get:
       description: Get Direct Connections from specified Airport
       parameters:
-      - description: 'Source airport       Example: SFO, LHR, CDG'
+      - description: 'Source airport<br>Example: SFO, LHR, CDG'
         in: query
         name: airport
         required: true
         type: string
-      - description: 'Number of direct connections to return (page size)      Default
+      - description: 'Number of direct connections to return (page size)<br>Default
           value : 10'
         in: query
         name: limit
         type: integer
-      - description: 'Number of direct connections to skip (for pagination)  Default
+      - description: 'Number of direct connections to skip (for pagination)<br>Default
           value : 0'
         in: query
         name: offset
@@ -416,7 +421,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
+              $ref: '#/definitions/models.Destination'
             type: array
         "500":
           description: Internal Server Error
@@ -427,17 +432,17 @@ paths:
     get:
       description: Get list of Airports. Optionally, you can filter the list by Country
       parameters:
-      - description: 'Country     Example: United Kingdom, France, United States'
+      - description: 'Country<br>Example: United Kingdom, France, United States'
         in: query
         name: country
         required: true
         type: string
-      - description: 'Number of airports to return (page size)     Default value :
+      - description: 'Number of airports to return (page size)<br>Default value :
           10'
         in: query
         name: limit
         type: integer
-      - description: 'Number of airports to skip (for pagination)     Default value
+      - description: 'Number of airports to skip (for pagination)<br>Default value
           : 0'
         in: query
         name: offset
@@ -449,7 +454,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
+              $ref: '#/definitions/models.Airport'
             type: array
         "500":
           description: Internal Server Error
@@ -458,10 +463,9 @@ paths:
       - Airport collection
   /api/v1/route/{id}:
     delete:
-      description: Deletes a document in the "route" collection based on the provided
-        key.
+      description: Delete Route with specified ID
       parameters:
-      - description: Deletes a document with key specified
+      - description: Route ID like route_10000
         in: path
         name: id
         required: true
@@ -470,23 +474,18 @@ paths:
       - application/json
       responses:
         "204":
-          description: No Content
-          schema:
-            items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
-            type: array
+          description: Route Deleted
         "404":
           description: Route Document ID Not Found
         "500":
           description: Internal Server Error
-      summary: Deletes Document
+      summary: Delete Route Document
       tags:
       - Route collection
     get:
-      description: Gets a document from the "route" collection based on the provided
-        key.
+      description: Get Route with specified ID
       parameters:
-      - description: search document by id
+      - description: Route ID like route_10000
         in: path
         name: id
         required: true
@@ -497,20 +496,18 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
-            type: array
+            $ref: '#/definitions/models.Route'
         "404":
           description: Route Document ID Not Found
         "500":
           description: Internal Server Error
-      summary: Get Document
+      summary: Get Route Document
       tags:
       - Route collection
     post:
-      description: Inserts a document to the "route" collection.
+      description: Create Route with specified ID
       parameters:
-      - description: Create document by specifying ID
+      - description: Route ID like route_10000
         in: path
         name: id
         required: true
@@ -520,28 +517,27 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBodyForRoute'
+          $ref: '#/definitions/models.Route'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/responses.TravelSampleResponse'
+            $ref: '#/definitions/models.Route'
         "400":
           description: Bad Request
         "409":
           description: Route Document already exists
         "500":
           description: Internal Server Error
-      summary: Insert Document
+      summary: Insert Route Document
       tags:
       - Route collection
     put:
-      description: Updates a document in the "route" collection based on the provided
-        key.
+      description: Update Route with specified ID
       parameters:
-      - description: Update document by id
+      - description: Route ID like route_10000
         in: path
         name: id
         required: true
@@ -551,21 +547,19 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.RequestBodyForRoute'
+          $ref: '#/definitions/models.Route'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/responses.TravelSampleResponse'
-            type: array
+            $ref: '#/definitions/models.Route'
         "400":
           description: Bad Request
         "500":
           description: Internal Server Error
-      summary: Update Document
+      summary: Update Route Document
       tags:
       - Route collection
 swagger: "2.0"

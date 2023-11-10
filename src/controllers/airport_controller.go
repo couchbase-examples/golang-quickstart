@@ -1,40 +1,64 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+	cError "src/errors"
 	"src/models"
-	"src/responses"
+	services "src/service"
 	"strconv"
 
+	"github.com/couchbase/gocb/v2"
 	"github.com/gin-gonic/gin"
 )
+
+type AirportController struct {
+	AirportService services.IAirportService
+}
+
+func NewAirportController(AirportService services.IAirportService) *AirportController {
+	return &AirportController{
+		AirportService: AirportService,
+	}
+}
 
 // @Summary      Insert Airport Document
 // @Description  Create Airport with specified ID
 // @Tags         Airport collection
 // @Produce      json
-// @Param        id path string true "Create document by specifying ID      Example: airport_1273"
-// @Param        data body models.RequestBodyForAirport true "Data to create a document"
-// @Success      201 {object} responses.TravelSampleResponse
+// @Param        id path string true "Airport ID like airport_1273"
+// @Param        data body models.Airport true "Data to create a document"
+// @Success      201 {object} models.Airport
 // @Failure      400 "Bad Request"
 // @Failure      409 "Airport Document already exists"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airport/{id} [post]
-func InsertDocumentForAirport() gin.HandlerFunc {
+func (ac *AirportController) InsertDocumentForAirport() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var data models.RequestBodyForAirport
 		docKey := context.Param("id")
-		// Bind the JSON data to the "data" variable
-		if err := context.BindJSON(&data); err != nil {
-			context.JSON(http.StatusBadRequest, responses.TravelSampleResponse{
-				Status:         http.StatusBadRequest,
-				Message:        "Bad Request",
-				CollectionData: "Error, Invalid request data: " + err.Error(),
+		data := models.Airport{}
+		if err := context.ShouldBindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, cError.Errors{
+				Error: "Error, Invalid request data: " + err.Error(),
 			})
 			return
 		}
-		insertDocument(context, "airport", docKey, data)
+
+		err := ac.AirportService.CreateAirport(docKey, &data)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentExists) {
+				context.JSON(http.StatusConflict, cError.Errors{
+					Error: "Error, Airport Document already exists: " + err.Error(),
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Airport Document could not be inserted: " + err.Error(),
+				})
+			}
+			return
+		}
+		context.JSON(http.StatusCreated, data)
 	}
 }
 
@@ -42,16 +66,28 @@ func InsertDocumentForAirport() gin.HandlerFunc {
 // @Description  Get Airport with specified ID
 // @Tags         Airport collection
 // @Produce      json
-// @Param        id path string true "Search document by ID    Example: airport_1273"
-// @Success      200 {object} responses.TravelSampleResponse
+// @Param        id path string true "Airport ID like airport_1273"
+// @Success      200 {object} models.Airport
 // @Failure      404 "Airport Document ID Not Found"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airport/{id} [get]
-func GetDocumentForAirport() gin.HandlerFunc {
+func (ac *AirportController) GetDocumentForAirport() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		docKey := context.Param("id")
-		var getDoc models.RequestBodyForAirport
-		getDocument(context, "airport", docKey, &getDoc)
+		airportData, err := ac.AirportService.GetAirport(docKey)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentNotFound) {
+				context.JSON(http.StatusNotFound, cError.Errors{
+					Error: "Error, Airport Document not found",
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Document could not be fetched: " + err.Error(),
+				})
+			}
+		} else {
+			context.JSON(http.StatusOK, *airportData)
+		}
 	}
 }
 
@@ -59,54 +95,73 @@ func GetDocumentForAirport() gin.HandlerFunc {
 // @Description  Update Airport with specified ID
 // @Tags         Airport collection
 // @Produce      json
-// @Param 		 id path string  true  "Update document by id         Example: airport_1273"
-// @Param		 data body models.RequestBodyForAirport true  "Updates document"
-// @Success      200  {array}  responses.TravelSampleResponse
+// @Param       id path string true "Airport ID like airport_1273"
+// @Param       data body models.Airport true "Updates document"
+// @Success      200 {object} models.Airport
 // @Failure      400 "Bad Request"
-// @Failure      500			"Internal Server Error"
+// @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airport/{id} [put]
-func UpdateDocumentForAirport() gin.HandlerFunc {
+func (ac *AirportController) UpdateDocumentForAirport() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var data models.RequestBodyForAirport
 		docKey := context.Param("id")
-		if err := context.BindJSON(&data); err != nil {
-			context.JSON(http.StatusBadRequest, responses.TravelSampleResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", CollectionData: err.Error()})
+		data := models.Airport{}
+		if err := context.ShouldBindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, cError.Errors{
+				Error: "Error while getting the request: " + err.Error(),
+			})
 			return
-
 		}
-		updateDocument(context, "airport", docKey, data)
+		err := ac.AirportService.UpdateAirport(docKey, &data)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Airport Document could not be updated: " + err.Error(),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, data)
 	}
-
 }
 
 // @Summary      Deletes Airport Document
 // @Description  Delete Airport with specified ID
 // @Tags         Airport collection
 // @Produce      json
-// @Param 		 id  path string true  "Deletes a document with key specified      Example: airport_1273"
-// @Success      204  {array}  responses.TravelSampleResponse
+// @Param 		 id  path string true  "Airport ID like airport_1273"
+// @Success      204    "Airport deleted"
 // @Failure 	 404			"Airport Document ID Not Found"
 // @Failure      500			"Internal Server Error"
 // @Router       /api/v1/airport/{id} [delete]
-func DeleteDocumentForAirport() gin.HandlerFunc {
+func (ac *AirportController) DeleteDocumentForAirport() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		docKey := context.Param("id")
-		deleteDocument(context, "airport", docKey)
+		err := ac.AirportService.DeleteAirport(docKey)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentNotFound) {
+				context.JSON(http.StatusNotFound, cError.Errors{
+					Error: "Error, Airport Document not found",
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Internal Server Error: " + err.Error(),
+				})
+			}
+			return
+		}
+		context.JSON(http.StatusNoContent, nil)
 	}
-
 }
 
 // @Summary      List Airport Document
 // @Description  Get list of Airports. Optionally, you can filter the list by Country
 // @Tags         Airport collection
 // @Produce      json
-// @Param        country query string true "Country     Example: United Kingdom, France, United States"
-// @Param        limit query int false "Number of airports to return (page size)     Default value : 10"
-// @Param        offset query int false "Number of airports to skip (for pagination)     Default value : 0"
-// @Success      200 {array} responses.TravelSampleResponse
+// @Param        country query string true "Country<br>Example: United Kingdom, France, United States"
+// @Param        limit query int false "Number of airports to return (page size)<br>Default value : 10"
+// @Param        offset query int false "Number of airports to skip (for pagination)<br>Default value : 0"
+// @Success      200 {object} []models.Airport
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airport/list [get]
-func GetAirports() gin.HandlerFunc {
+func (ac *AirportController) GetAirports() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		country := context.Query("country")
 		limit, err := strconv.Atoi(context.DefaultQuery("limit", "10"))
@@ -132,10 +187,20 @@ func GetAirports() gin.HandlerFunc {
             LIMIT %d
             OFFSET %d;
         `, country, limit, offset)
-
 		// Use the common method to execute the query and return the results
-		var airports models.RequestBodyForAirport
-		GetDocumentsFromQuery(context, "airports", query, &airports)
+		queryResult, err := ac.AirportService.QueryAirport(query)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Query execution: " + err.Error(),
+			})
+		}
+		if queryResult != nil {
+			context.JSON(http.StatusOK, queryResult)
+		} else {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Document not found with the search query specified",
+			})
+		}
 	}
 }
 
@@ -143,13 +208,13 @@ func GetAirports() gin.HandlerFunc {
 // @Description  Get Direct Connections from specified Airport
 // @Tags         Airport collection
 // @Produce      json
-// @Param        airport query string true "Source airport       Example: SFO, LHR, CDG"
-// @Param        limit query int false "Number of direct connections to return (page size)      Default value : 10"
-// @Param        offset query int false "Number of direct connections to skip (for pagination)  Default value : 0"
-// @Success      200 {array} responses.TravelSampleResponse
+// @Param        airport query string true "Source airport<br>Example: SFO, LHR, CDG"
+// @Param        limit query int false "Number of direct connections to return (page size)<br>Default value : 10"
+// @Param        offset query int false "Number of direct connections to skip (for pagination)<br>Default value : 0"
+// @Success      200 {object} []models.Destination
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airport/direct-connections [get]
-func GetDirectConnections() gin.HandlerFunc {
+func (ac *AirportController) GetDirectConnections() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		airport := context.Query("airport")
 		limit, err := strconv.Atoi(context.DefaultQuery("limit", "10"))
@@ -172,7 +237,18 @@ func GetDirectConnections() gin.HandlerFunc {
         `, airport, limit, offset)
 
 		// Use the common method to execute the query and return the results
-		var airports models.RequestBodyForAirport
-		GetDocumentsFromQuery(context, "airports", query, &airports)
+		queryResult, err := ac.AirportService.QueryDirectConnectionAirport(query)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Query execution: " + err.Error(),
+			})
+		}
+		if queryResult != nil {
+			context.JSON(http.StatusOK, queryResult)
+		} else {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Document not found with the search query specified",
+			})
+		}
 	}
 }

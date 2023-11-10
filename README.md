@@ -2,7 +2,7 @@
 
 #### Build a REST API with Couchbase's Golang SDK 2.5 and Gin Gonic
 
-> This repo is designed to teach you how to connect to a Couchbase cluster to create, read, update, and delete documents and how to write simple parametrized N1QL queries.
+> This repo is designed to teach you how to connect to a Couchbase Capella cluster to create, read, update, and delete documents and how to write simple parametrized SQL++ queries using the built-in travel-sample bucket. If you want to run this tutorial using a self managed Couchbase cluster, please refer to the [appendix](#appendix-running-self-managed-couchbase-cluster).
 
 
 Full documentation can be found on the [Couchbase Developer Portal](https://developer.couchbase.com/tutorial-quickstart-golang-gin-gonic).
@@ -11,63 +11,91 @@ Full documentation can be found on the [Couchbase Developer Portal](https://deve
 
 To run this prebuilt project, you will need:
 
-- Follow [Get Started with Couchbase Capella](https://docs.couchbase.com/cloud/get-started/get-started.html) for more information about Couchbase Capella.
-- Follow [Couchbase Installation Options](https://developer.couchbase.com/tutorial-couchbase-installation-options) for installing the latest Couchbase Database Server Instance
+- Couchbase Server (7 or higher) with [travel-sample](https://docs.couchbase.com/go-sdk/current/ref/travel-app-data-model.html) bucket loaded.
+  - [Couchbase Capella](https://www.couchbase.com/products/capella/) is the easiest way to get started.
 - Basic knowledge of [Golang](https://go.dev/tour/welcome/1) and [Gin Gonic](https://gin-gonic.com/docs/)
-- [Golang v1.19.x](https://go.dev/dl/) installed
-- Code Editor installed
-- Note that this tutorial is designed to work with the latest Golang SDK (2.x) for Couchbase. It will not work with the older Golang SDK for Couchbase without adapting the code.
+- [Golang v1.21.x](https://go.dev/dl/) installed
 
+### Loading Travel Sample Bucket
+
+If travel-sample is not loaded in your Capella cluster, you can load it by following the instructions for your Capella Cluster:
+
+- [Load travel-sample bucket in Couchbase Capella](https://docs.couchbase.com/cloud/clusters/data-service/import-data-documents.html#import-sample-data)
 ## Install Dependencies
 
 Any dependencies will be installed by running the go run command, which installs any dependencies required from the go.mod file.
 
-## Database Server Configuration
 
-All configuration for communication with the database is stored in the `.env` file. This includes the Connection string, username, password, bucket name, collection name and scope name. The default username is assumed to be `Administrator` and the default password is assumed to be `Password1$`. If these are different in your environment you will need to change them before running the application.
+### Database Server Configuration
 
-### Running Couchbase Capella
+All configuration for communication with the database is read from the environment variables. We have provided a convenience feature in this quickstart to read the environment variables from a local file, `.env` in the source folder.
 
-When running Couchbase using Capella, the application requires the bucket and the database user to be setup from Capella Console. The directions for creating a bucket called `user_profile` can be found on the [documentation website](https://docs.couchbase.com/cloud/clusters/data-service/manage-buckets.html#add-bucket). Next, follow the directions for [Configure Database Credentials](https://docs.couchbase.com/cloud/clusters/manage-database-users.html) and name the username `Administrator` and password `Password1$`.
+Create a copy of .env.example & rename it to .env & add the values for the Couchbase connection.
 
-Next, open the `.env` file. Locate CONNECTION_STRING and update it to match your Wide Area Network name found in the [Capella Portal UI Connect Tab](https://docs.couchbase.com/cloud/get-started/connect-to-cluster.html#connect-to-your-cluster-using-the-built-in-sdk-examples). Note that Capella uses TLS so the Connection string must start with couchbases://. Note that this configuration is designed for development environments only.
+To know more about connecting to your Capella cluster, please follow the [instructions](https://docs.couchbase.com/cloud/get-started/connect.html).
 
-```
-CONNECTION_STRING=couchbases://yourhostname.cloud.couchbase.com
-BUCKET=user_profile
-COLLECTION=default
-SCOPE=default
-USERNAME=Administrator
-PASSWORD=Password1$
+```sh
+CONNECTION_STRING=<connection_string>
+USERNAME=<user_with_read_write_permission_to_travel-sample_bucket>
+PASSWORD=<password_for_user>
 ```
 
-### Running Couchbase Locally
+> Note: The connection string expects the `couchbases://` or `couchbase://` part.
 
-For local installation and Docker users, follow the directions found on the [documentation website](https://docs.couchbase.com/server/current/manage/manage-buckets/create-bucket.html) for creating a bucket called `user_profile`. Next, follow the directions for [Creating a user](); name the username `Administrator` and password `Password1$`. For this tutorial, make sure it has `Full Admin` rights so that the application can create collections and indexes.
+## Running The Application
 
-Next, open the `.env` file and validate that the configuration information matches your setup.
+### Running directly on machine
 
-> **NOTE:** For docker and local Couchbase installations, Couchbase must be installed and running on localhost (<http://127.0.0.1:8091>) prior to running the the Golang application.
+At this point, we have installed the dependencies, loaded the travel-sample data and configured the application with the credentials. The application is now ready and you can run it.
 
-### Running The Application
+The application will run on port 8080 of your local machine (http://localhost:8080). You will find the Swagger documentation of the API.
 
-At this point the application is ready. Make sure you are in the src directory. You can run it with the following command from the terminal/command prompt:
-
-```shell
+```sh
+cd src
 go run .
 ```
 
-Once the site is up and running, you can launch your browser and go to the [Swagger start page](http://127.0.0.1:8080/docs/index.html) to test the APIs.
+### Running using Docker
 
-### Running The Tests
+- Build the Docker image
 
-To run the standard integration tests, use the following commands from the src directory:
+```sh
+cd src
+docker build -t couchbase-gin-gonic-quickstart .
+```
 
-```bash
+- Run the Docker image
+
+```sh
+docker run -it --env-file .env -p 8080:8080 couchbase-gin-gonic-quickstart
+```
+
+> Note: The `.env` file has the connection information to connect to your Capella cluster. The application can now be reached on port 8080 of your local machine.
+
+## Running The Tests
+
+To run the standard unit tests, use the following commands:
+
+```sh
 cd test
 go test -v
 ```
 
+## Appendix: Data Model
+
+For this quickstart, we use three collections, `airport`, `airline` and `routes` that contain sample airports, airlines and airline routes respectively. The routes collection connects the airports and airlines as seen in the figure below. We use these connections in the quickstart to generate airports that are directly connected and airlines connecting to a destination airport. Note that these are just examples to highlight how you can use SQL++ queries to join the collections.
+
+![travel sample data model](travel_sample_data_model.png)
+
+## Appendix: Running Self Managed Couchbase Cluster
+
+If you are running this quickstart with a self managed Couchbase cluster, you need to [load](https://docs.couchbase.com/server/current/manage/manage-settings/install-sample-buckets.html) the travel-sample data bucket in your cluster and generate the credentials for the bucket.
+
+You need to update the connection string and the credentials in the `.env` file in the source folder.
+
+> Note: Couchbase Server must be installed and running prior to running this app.
+
+
 ## Conclusion
 
-Setting up a basic REST API in Golang and Gin Gonic with Couchbase is fairly simple,this project when run will showcase basic CRUD operations along with creating an index for our parameterized  [N1QL query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) which is used in most applications.
+Setting up a basic REST API in Golang and Gin Gonic with Couchbase is fairly simple,this project when run will showcase basic CRUD operations along with executing [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) which is used in most applications.

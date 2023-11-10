@@ -6,5 +6,5 @@ var SharedScope *gocb.Scope
 
 // InitializeSharedScope initializes the shared scope.
 func InitializeSharedScope(scope *gocb.Scope) {
-    SharedScope = scope
+	SharedScope = scope
 }

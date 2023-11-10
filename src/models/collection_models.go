@@ -1,56 +1,49 @@
 package models
 
 // Airline document model
-type RequestBodyForAirline struct {
-	Callsign string `json:"callsign,omitempty" default:"SampleCallsign"`
-	Country  string `json:"country" binding:"required" default:"SampleCountry"`
-	IATA     string `json:"iata,omitempty" default:"SMP"`
-	ICAO     string `json:"icao" binding:"required" default:"SMPL"`
-	Name     string `json:"name" binding:"required" default:"SampleName"`
+type Airline struct {
+	Callsign string `json:"callsign,omitempty" example:"SAF"`
+	Country  string `json:"country,omitempty" binding:"required" example:"United States"`
+	IATA     string `json:"iata,omitempty" example:"SA"`
+	ICAO     string `json:"icao,omitempty" binding:"required" example:"SAF"`
+	Name     string `json:"name,omitempty" binding:"required" example:"SampleName"`
 }
 
 // Airport document model
-// type RequestBodyForAirport struct {
-// 	AirportName string `json:"airportname" binding:"required"`
-// 	City        string `json:"city" binding:"required"`
-// 	Country     string `json:"country" binding:"required"`
-// 	FAA         string `json:"faa,omitempty" binding:"required"`
-// 	GEO         struct {
-// 		Alt float64 `json:"alt"`
-// 		Lat float64 `json:"lat"`
-// 		Lon float64 `json:"lon"`
-// 	} `json:"geo"`
-// 	ICAO string `json:"icao,omitempty"`
-// 	TZ   string `json:"tz"`
-// }
+type Geo struct {
+	Alt float64 `json:"alt" example:"48.864716"`
+	Lat float64 `json:"lat" example:"2.349014"`
+	Lon float64 `json:"lon" example:"92.0"`
+}
 
-// Airport document model
-type RequestBodyForAirport struct {
-	AirportName string `json:"airportname" binding:"required" example:"SampleAirport"`
-	City        string `json:"city" binding:"required" example:"SampleCity"`
-	Country     string `json:"country" binding:"required" example:"United Kingdom"`
+type Airport struct {
+	AirportName string `json:"airportname,omitempty" binding:"required" example:"SampleAirport"`
+	City        string `json:"city,omitempty" binding:"required" example:"SampleCity"`
+	Country     string `json:"country,omitempty" binding:"required" example:"United Kingdom"`
 	FAA         string `json:"faa,omitempty" binding:"required" example:"SAA"`
-	GEO         struct {
-		Alt float64 `json:"alt" example:48.864716`
-		Lat float64 `json:"lat" example:2.349014`
-		Lon float64 `json:"lon" example:92.0`
-	} `json:"geo"`
-	ICAO string `json:"icao,omitempty" example:"SAAA"`
-	TZ   string `json:"tz" example:"Europe/Paris"`
+	GEO         Geo    `json:"geo,omitempty"`
+	ICAO        string `json:"icao,omitempty" example:"SAAA"`
+	TZ          string `json:"tz,omitempty" example:"Europe/Paris"`
 }
 
 // Route document model
-type RequestBodyForRoute struct {
-	Airline            string  `json:"airline"`
-	AirlineID          string  `json:"airlineid"`
-	DestinationAirport string  `json:"destinationairport"`
-	Distance           float64 `json:"distance"`
-	Equipment          string  `json:"equipment"`
-	Schedule           []struct {
-		Day    int    `json:"day"`
-		Flight string `json:"flight"`
-		UTC    string `json:"utc"`
-	} `json:"schedule"`
-	SourceAirport string `json:"sourceairport"`
-	Stops         int    `json:"stops"`
+type Schedule struct {
+	Day    int    `json:"day" example:"1"`
+	Flight string `json:"flight" example:"XYZ123"`
+	UTC    string `json:"utc" example:"14:30"`
+}
+
+type Route struct {
+	Airline            string     `json:"airline,omitempty" binding:"required" example:"AF"`
+	Airline_id         string     `json:"airline_id,omitempty" binding:"required" example:"airline_10"`
+	SourceAirport      string     `json:"sourceairport,omitempty" binding:"required" example:"SFO"`
+	DestinationAirport string     `json:"destinationairport,omitempty" binding:"required" example:"JFK"`
+	Stops              int        `json:"stops,omitempty" example:"0"`
+	Equipment          string     `json:"equipment,omitempty" example:"CRJ"`
+	Schedule           []Schedule `json:"schedule,omitempty"`
+	Distance           float64    `json:"distance,omitempty" example:"4151.79"`
+}
+
+type Destination struct {
+	DestinationAirport string `json:"destinationairport" example:"JFK"`
 }

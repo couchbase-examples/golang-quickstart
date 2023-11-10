@@ -1,113 +1,167 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+	cError "src/errors"
 	"src/models"
-	"src/responses"
+	services "src/service"
 	"strconv"
 
+	"github.com/couchbase/gocb/v2"
 	"github.com/gin-gonic/gin"
 )
 
+type AirlineController struct {
+	AirlineService services.IAirlineService
+}
+
+func NewAirlineController(airlineService services.IAirlineService) *AirlineController {
+	return &AirlineController{
+		AirlineService: airlineService,
+	}
+}
+
 // @Summary      Insert Document
-// @Description  Inserts a document into the "airline" collection.
+// @Description  Create Airline with specified ID
 // @Tags         Airline collection
 // @Produce      json
-// @Param        id path string true "Create document by specifying ID.    Example: airline_123"
-// @Param        data body models.RequestBodyForAirline true "Data to create a new document"
-// @Success      201 {object} responses.TravelSampleResponseForAirline
+// @Param        id path string true "Airline ID like airline_10"
+// @Param        data body models.Airline true "Data to create a new document"
+// @Success      201 {object} models.Airline
 // @Failure      400 "Bad Request"
 // @Failure      409 "Airline document already exists"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airline/{id} [post]
-func InsertDocumentForAirline() gin.HandlerFunc {
+func (ac *AirlineController) InsertDocumentForAirline() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var data models.RequestBodyForAirline
 		docKey := context.Param("id")
-		// Bind the JSON data to the "data" variable
-		if err := context.BindJSON(&data); err != nil {
-			context.JSON(http.StatusBadRequest, responses.TravelSampleResponse{
-				Status:         http.StatusBadRequest,
-				Message:        "Bad Request",
-				CollectionData: "Error, Invalid request data: " + err.Error(),
+		data := models.Airline{}
+		if err := context.ShouldBindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, cError.Errors{
+				Error: "Error, Invalid request data: " + err.Error(),
 			})
 			return
 		}
-		insertDocument(context, "airline", docKey, data)
+
+		err := ac.AirlineService.CreateAirline(docKey, &data)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentExists) {
+				context.JSON(http.StatusConflict, cError.Errors{
+					Error: "Error, Airline Document already exists: " + err.Error(),
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Airline Document could not be inserted: " + err.Error(),
+				})
+			}
+			return
+		}
+		context.JSON(http.StatusCreated, data)
 	}
 }
 
 // @Summary      Get Airline Document
-// @Description  Gets a document from the "airline" collection based on the provided key.
+// @Description  Get Airline with specified ID
 // @Tags         Airline collection
 // @Produce      json
-// @Param        id path string true "Get document by ID.    Example: 'airline_123'"
-// @Success      200 {object} responses.TravelSampleResponse
+// @Param        id path string true "Airline ID like airline_10"
+// @Success      200 {object} models.Airline
 // @Failure      404 "Airline Document ID not found"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airline/{id} [get]
-func GetDocumentForAirline() gin.HandlerFunc {
+func (ac *AirlineController) GetDocumentForAirline() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		documentID := context.Param("id")
-		var getDoc models.RequestBodyForAirline
-		getDocument(context, "airline", documentID, &getDoc)
+		docKey := context.Param("id")
+		airlineData, err := ac.AirlineService.GetAirline(docKey)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentNotFound) {
+				context.JSON(http.StatusNotFound, cError.Errors{
+					Error: "Error, Airline Document not found",
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Document could not be fetched: " + err.Error(),
+				})
+			}
+		} else {
+			context.JSON(http.StatusOK, *airlineData)
+		}
 	}
 }
 
 // @Summary      Update Document
-// @Description  Updates a document in the "airline" collection based on the provided key.
+// @Description  Update Airline with specified ID
 // @Tags         Airline collection
 // @Produce      json
-// @Param       id path string  true  "Update document by ID.    Example: 'airline_123'"
-// @Param		 data body models.RequestBodyForAirline true  "Updates document"
-// @Success      200  {array}  responses.TravelSampleResponse
+// @Param       id path string true "Airline ID like airline_10"
+// @Param       data body models.Airline true "Updates document"
+// @Success      200 {object} models.Airline
 // @Failure      400 "Bad Request"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airline/{id} [put]
-func UpdateDocumentForAirline() gin.HandlerFunc {
+func (ac *AirlineController) UpdateDocumentForAirline() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var data models.RequestBodyForAirline
 		docKey := context.Param("id")
-		if err := context.BindJSON(&data); err != nil {
-			context.JSON(http.StatusBadRequest, responses.TravelSampleResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", CollectionData: err.Error()})
+		data := models.Airline{}
+		if err := context.ShouldBindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, cError.Errors{
+				Error: "Error while getting the request: " + err.Error(),
+			})
 			return
-
 		}
-		updateDocument(context, "airline", docKey, data)
-
+		err := ac.AirlineService.UpdateAirline(docKey, &data)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Airline Document could not be updated: " + err.Error(),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, data)
 	}
-
 }
 
 // @Summary      Delete Document
-// @Description  Deletes a document in the "airline" collection based on the provided key.
+// @Description  Delete Airline with specified ID
 // @Tags         Airline collection
 // @Produce      json
-// @Param        id path string true "Deletes a document with the specified key. Example: 'sample_id'"
-// @Success      204 {object} responses.TravelSampleResponse
+// @Param       id path string true "Airline ID like airline_10"
+// @Success      204  "Airline deleted"
 // @Failure      404 "Airline Document ID Not Found"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airline/{id} [delete]
-func DeleteDocumentForAirline() gin.HandlerFunc {
+func (ac *AirlineController) DeleteDocumentForAirline() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		docKey := context.Param("id")
-		deleteDocument(context, "airline", docKey)
-
+		err := ac.AirlineService.DeleteAirline(docKey)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentNotFound) {
+				context.JSON(http.StatusNotFound, cError.Errors{
+					Error: "Error, Airline Document not found",
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Internal Server Error: " + err.Error(),
+				})
+			}
+			return
+		}
+		context.JSON(http.StatusNoContent, nil)
 	}
 }
 
 // @Summary      Get Airlines by Country
-// @Description  Get a list of airlines filtered by country
+// @Description  Get list of Airlines. Optionally, you can filter the list by Country
 // @Tags         Airline collection
 // @Produce      json
-// @Param        country query string true "Filter by country. Example: 'France'"
-// @Param        limit query int false "Number of airlines to return (page size). Example: 10"
-// @Param        offset query int false "Number of airlines to skip (for pagination). Example: 0"
-// @Success      200 {object} responses.TravelSampleResponse
+// @Param        country query string false "Filter by country<br>Example: France, United Kingdom, United States"
+// @Param        limit query int false "Number of airlines to return (page size).<br>Example: 10"
+// @Param        offset query int false "Number of airlines to skip (for pagination).<br>Example: 0"
+// @Success      200 {object} []models.Airline
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airline/list [get]
-func GetAirlines() gin.HandlerFunc {
+func (ac *AirlineController) GetAirlines() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		// Parse query parameters
 		country := context.DefaultQuery("country", "")
@@ -119,9 +173,10 @@ func GetAirlines() gin.HandlerFunc {
 		if err != nil {
 			offset = 0
 		}
-
+		var query string
 		// Query to get a list of airlines filtered by country
-		query := fmt.Sprintf(`
+		if country != "" {
+			query = fmt.Sprintf(`
 		SELECT airline.callsign,
 			airline.country,
 			airline.iata,
@@ -133,23 +188,48 @@ func GetAirlines() gin.HandlerFunc {
 		LIMIT %d
 		OFFSET %d;
 	`, country, limit, offset)
-		var airlines models.RequestBodyForAirline
-		// Execute the query, retrieve and return the result
-		GetDocumentsFromQuery(context, "airline", query, &airlines)
+		} else {
+			query = fmt.Sprintf(`
+			SELECT airline.callsign,
+				airline.country,
+				airline.iata,
+				airline.icao,
+				airline.name
+			FROM airline as airline
+			ORDER BY airline.name
+			LIMIT %d
+			OFFSET %d;
+		`, limit, offset)
+		}
+		queryResult, err := ac.AirlineService.QueryAirline(query)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Query execution: " + err.Error(),
+			})
+		}
+
+		if queryResult != nil {
+			context.JSON(http.StatusOK, queryResult)
+		} else {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Document not found with the search query specified",
+			})
+		}
+
 	}
 }
 
 // @Summary      Get Airlines Flying to Airport
-// @Description  Get a list of airlines flying to a specific airport
+// @Description  Get Airlines flying to specified destination Airport
 // @Tags         Airline collection
 // @Produce      json
-// @Param        airport query string true "Destination airport. Example: 'JFK'"
-// @Param        limit query int false "Number of airlines to return (page size). Example: 10"
-// @Param        offset query int false "Number of airlines to skip (for pagination). Example: 0"
-// @Success      200 {object} responses.TravelSampleResponse
+// @Param        airport query string true "Destination airport<br>Example : SFO, JFK, LAX"
+// @Param        limit query int false "Number of airlines to return (page size)<br>Default value : 10"
+// @Param        offset query int false "Number of airlines to skip (for pagination)<br>Default value : 0"
+// @Success      200 {object} []models.Airline
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/airline/to-airport [get]
-func GetAirlinesToAirport() gin.HandlerFunc {
+func (ac *AirlineController) GetAirlinesToAirport() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		// Parse query parameters
 		airport := context.Query("airport")
@@ -181,8 +261,18 @@ func GetAirlinesToAirport() gin.HandlerFunc {
             OFFSET %d;
         `, airport, limit, offset)
 
-		// Execute the query, retrieve and return the result
-		var airlines models.RequestBodyForAirline
-		GetDocumentsFromQuery(context, "airline", query, &airlines)
+		queryResult, err := ac.AirlineService.QueryAirline(query)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Query execution: " + err.Error(),
+			})
+		}
+		if queryResult != nil {
+			context.JSON(http.StatusOK, queryResult)
+		} else {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Document not found with the search query specified",
+			})
+		}
 	}
 }

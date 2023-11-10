@@ -10,51 +10,57 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupCollectionRoutes(router *gin.Engine) {
+type Controllers struct {
+	AirlineController *controllers.AirlineController
+	AirportController *controllers.AirportController
+	RouteController   *controllers.RouteController
+}
+
+func SetupCollectionRoutes(router *gin.Engine, controllers Controllers) {
 	// Apply CORS middleware for cross-origin requests
 	router.Use(cors.Default())
 
 	// Airline collection endpoints
 	// Insert
-	router.POST("api/v1/airline/:id", controllers.InsertDocumentForAirline())
+	router.POST("api/v1/airline/:id", controllers.AirlineController.InsertDocumentForAirline())
 	// Get
-	router.GET("api/v1/airline/:id", controllers.GetDocumentForAirline())
+	router.GET("api/v1/airline/:id", controllers.AirlineController.GetDocumentForAirline())
 	// Update
-	router.PUT("api/v1/airline/:id", controllers.UpdateDocumentForAirline())
+	router.PUT("api/v1/airline/:id", controllers.AirlineController.UpdateDocumentForAirline())
 	// Delete
-	router.DELETE("api/v1/airline/:id", controllers.DeleteDocumentForAirline())
+	router.DELETE("api/v1/airline/:id", controllers.AirlineController.DeleteDocumentForAirline())
 	// Get
-	router.GET("api/v1/airline/list", controllers.GetAirlines())
+	router.GET("api/v1/airline/to-airport", controllers.AirlineController.GetAirlinesToAirport())
 	// Get
-	router.GET("api/v1/airline/to-airport", controllers.GetAirlinesToAirport())
+	router.GET("api/v1/airline/list", controllers.AirlineController.GetAirlines())
 
 	// Route collection endpoints
 	// Insert
-	router.POST("api/v1/route/:id", controllers.InsertDocumentForRoute())
+	router.POST("api/v1/route/:id", controllers.RouteController.InsertDocumentForRoute())
 	// Get
-	router.GET("api/v1/route/:id", controllers.GetDocumentForRoute())
+	router.GET("api/v1/route/:id", controllers.RouteController.GetDocumentForRoute())
 	// Update
-	router.PUT("api/v1/route/:id", controllers.UpdateDocumentForRoute())
+	router.PUT("api/v1/route/:id", controllers.RouteController.UpdateDocumentForRoute())
 	// Delete
-	router.DELETE("api/v1/route/:id", controllers.DeleteDocumentForRoute())
+	router.DELETE("api/v1/route/:id", controllers.RouteController.DeleteDocumentForRoute())
 
 	// Airport collection endpoints
 	// Insert
-	router.POST("api/v1/airport/:id", controllers.InsertDocumentForAirport())
+	router.POST("api/v1/airport/:id", controllers.AirportController.InsertDocumentForAirport())
 	// Get
-	router.GET("api/v1/airport/:id", controllers.GetDocumentForAirport())
+	router.GET("api/v1/airport/:id", controllers.AirportController.GetDocumentForAirport())
 	// Update
-	router.PUT("api/v1/airport/:id", controllers.UpdateDocumentForAirport())
+	router.PUT("api/v1/airport/:id", controllers.AirportController.UpdateDocumentForAirport())
 	// Delete
-	router.DELETE("api/v1/airport/:id", controllers.DeleteDocumentForAirport())
+	router.DELETE("api/v1/airport/:id", controllers.AirportController.DeleteDocumentForAirport())
 	// Get
-	router.GET("api/v1/airport/list", controllers.GetAirports())
+	router.GET("api/v1/airport/list", controllers.AirportController.GetAirports())
 	// Get
-	router.GET("api/v1/airport/direct-connections", controllers.GetDirectConnections())
+	router.GET("api/v1/airport/direct-connections", controllers.AirportController.GetDirectConnections())
+
 	// Swagger UI and documentation
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/", func(context *gin.Context) {
 		context.Redirect(http.StatusFound, "/docs/index.html")
 	})
-
 }

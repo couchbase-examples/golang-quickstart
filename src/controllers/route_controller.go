@@ -1,96 +1,150 @@
 package controllers
 
 import (
-    "net/http"
-    "src/models"
-    "src/responses"
-    "github.com/gin-gonic/gin"
+	"errors"
+	"net/http"
+	cError "src/errors"
+	"src/models"
+	services "src/service"
+
+	"github.com/couchbase/gocb/v2"
+	"github.com/gin-gonic/gin"
 )
 
+type RouteController struct {
+	RouteService services.IRouteService
+}
 
-// @Summary      Insert Document
-// @Description  Inserts a document to the "route" collection.
+func NewRouteController(routeService services.IRouteService) *RouteController {
+	return &RouteController{
+		RouteService: routeService,
+	}
+}
+
+// @Summary      Insert Route Document
+// @Description  Create Route with specified ID
 // @Tags         Route collection
 // @Produce      json
-// @Param        id path string true "Create document by specifying ID"
-// @Param        data body models.RequestBodyForRoute true "Data to create a document"
-// @Success      201 {object} responses.TravelSampleResponse
+// @Param        id path string true "Route ID like route_10000"
+// @Param        data body models.Route true "Data to create a document"
+// @Success      201 {object} models.Route
 // @Failure      400 "Bad Request"
 // @Failure      409 "Route Document already exists"
 // @Failure      500 "Internal Server Error"
 // @Router       /api/v1/route/{id} [post]
-func InsertDocumentForRoute() gin.HandlerFunc {
+func (ac *RouteController) InsertDocumentForRoute() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var data models.RequestBodyForRoute
 		docKey := context.Param("id")
-		// Bind the JSON data to the "data" variable
-		if err := context.BindJSON(&data); err != nil {
-			context.JSON(http.StatusBadRequest, responses.TravelSampleResponse{
-				Status:         http.StatusBadRequest,
-				Message:        "Bad Request",
-				CollectionData: "Error, Invalid request data: " + err.Error(),
+		data := models.Route{}
+		if err := context.ShouldBindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, cError.Errors{
+				Error: "Error, Invalid request data: " + err.Error(),
 			})
 			return
 		}
-		insertDocument(context, "route", docKey, data)
-	}
-}
 
-// @Summary      Get Document
-// @Description  Gets a document from the "route" collection based on the provided key.
-// @Tags         Route collection
-// @Produce      json
-// @Param 		 id path string  true  "search document by id"
-// @Success      200  {array}  responses.TravelSampleResponse
-// @Failure 	 404			"Route Document ID Not Found"
-// @Failure      500			"Internal Server Error"
-// @Router       /api/v1/route/{id} [get]
-func GetDocumentForRoute() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		docKey := context.Param("id")
-		var getDoc models.RequestBodyForRoute
-		getDocument(context, "route", docKey, &getDoc)
-	}
-
-}
-
-// @Summary      Update Document
-// @Description  Updates a document in the "route" collection based on the provided key.
-// @Tags         Route collection
-// @Produce      json
-// @Param 		 id path string  true  "Update document by id"
-// @Param		 data body models.RequestBodyForRoute true  "Updates document"
-// @Success      200  {array}  responses.TravelSampleResponse
-// @Failure      400 "Bad Request"
-// @Failure      500			"Internal Server Error"
-// @Router       /api/v1/route/{id} [put]
-func UpdateDocumentForRoute() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		var data models.RequestBodyForRoute
-		docKey := context.Param("id")
-		if err := context.BindJSON(&data); err != nil {
-			context.JSON(http.StatusBadRequest, responses.TravelSampleResponse{Status: http.StatusBadRequest, Message: "Error while getting the request", CollectionData: err.Error()})
+		err := ac.RouteService.CreateRoute(docKey, &data)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentExists) {
+				context.JSON(http.StatusConflict, cError.Errors{
+					Error: "Error, Route Document already exists: " + err.Error(),
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Route Document could not be inserted: " + err.Error(),
+				})
+			}
 			return
-
 		}
-		updateDocument(context, "route", docKey, data)
+		context.JSON(http.StatusCreated, data)
 	}
-
 }
 
-// @Summary      Deletes Document
-// @Description  Deletes a document in the "route" collection based on the provided key.
+// @Summary      Get Route Document
+// @Description  Get Route with specified ID
 // @Tags         Route collection
 // @Produce      json
-// @Param 		 id  path string true  "Deletes a document with key specified"
-// @Success      204  {array}  responses.TravelSampleResponse
-// @Failure 	 404			"Route Document ID Not Found"
-// @Failure      500			"Internal Server Error"
-// @Router       /api/v1/route/{id} [delete]
-func DeleteDocumentForRoute() gin.HandlerFunc {
+// @Param        id path string true "Route ID like route_10000"
+// @Success      200 {object} models.Route
+// @Failure      404 "Route Document ID Not Found"
+// @Failure      500 "Internal Server Error"
+// @Router       /api/v1/route/{id} [get]
+func (ac *RouteController) GetDocumentForRoute() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		docKey := context.Param("id")
-		deleteDocument(context, "route", docKey)
+		routeData, err := ac.RouteService.GetRoute(docKey)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentNotFound) {
+				context.JSON(http.StatusNotFound, cError.Errors{
+					Error: "Error, Route Document not found",
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Document could not be fetched: " + err.Error(),
+				})
+			}
+		} else {
+			context.JSON(http.StatusOK, &routeData)
+		}
 	}
+}
 
+// @Summary      Update Route Document
+// @Description  Update Route with specified ID
+// @Tags         Route collection
+// @Produce      json
+// @Param        id path string true "Route ID like route_10000"
+// @Param        data body models.Route true "Updates document"
+// @Success      200 {object} models.Route
+// @Failure      400 "Bad Request"
+// @Failure      500 "Internal Server Error"
+// @Router       /api/v1/route/{id} [put]
+func (ac *RouteController) UpdateDocumentForRoute() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		docKey := context.Param("id")
+		data := models.Route{}
+		if err := context.ShouldBindJSON(&data); err != nil {
+			context.JSON(http.StatusBadRequest, cError.Errors{
+				Error: "Error while getting the request: " + err.Error(),
+			})
+			return
+		}
+		err := ac.RouteService.UpdateRoute(docKey, &data)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, cError.Errors{
+				Error: "Error, Route Document could not be updated: " + err.Error(),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, data)
+	}
+}
+
+// @Summary      Delete Route Document
+// @Description  Delete Route with specified ID
+// @Tags         Route collection
+// @Produce      json
+// @Param        id path string true "Route ID like route_10000"
+// @Success      204 "Route Deleted"
+// @Failure      404 "Route Document ID Not Found"
+// @Failure      500 "Internal Server Error"
+// @Router       /api/v1/route/{id} [delete]
+func (ac *RouteController) DeleteDocumentForRoute() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		docKey := context.Param("id")
+		err := ac.RouteService.DeleteRoute(docKey)
+		if err != nil {
+			if errors.Is(err, gocb.ErrDocumentNotFound) {
+				context.JSON(http.StatusNotFound, cError.Errors{
+					Error: "Error, Route Document not found",
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, cError.Errors{
+					Error: "Error, Internal Server Error: " + err.Error(),
+				})
+			}
+			return
+		}
+		context.JSON(http.StatusNoContent, nil)
+	}
 }

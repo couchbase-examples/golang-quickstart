@@ -3,8 +3,11 @@ package test
 import (
 	"bytes"
 	"encoding/json"
+	"src/models"
+
 	"fmt"
 	"net/http"
+
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,34 +15,14 @@ import (
 
 var collectionBaseForAirline = "http://127.0.0.1:8080"
 
-type AirlineResponse struct {
-	Status  int           `json:"status"`
-	Message string        `json:"message"`
-	Data    []AirlineData `json:"data"`
-}
-
-type AirlineResponseForSingleDocument struct {
-	Status  int         `json:"status"`
-	Message string      `json:"message"`
-	Data    AirlineData `json:"data"`
-}
-
-type AirlineData struct {
-	Callsign string `json:"callsign"`
-	Country  string `json:"country"`
-	Iata     string `json:"iata"`
-	Icao     string `json:"icao"`
-	Name     string `json:"name"`
-}
-
 func TestAddairline(t *testing.T) {
 	documentID := "airline_test_add"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
 	// Define the airline data
-	airlineData := AirlineData{
+	airlineData := models.Airline{
 		Name:     "Sample Airline",
-		Icao:     "SALL",
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Sample Country",
 	}
@@ -70,7 +53,7 @@ func TestAddairline(t *testing.T) {
 	defer getResp.Body.Close()
 
 	// Deserialize the response JSON
-	var retrievedData AirlineResponseForSingleDocument
+	var retrievedData models.Airline
 	decoder := json.NewDecoder(getResp.Body)
 	err = decoder.Decode(&retrievedData)
 	if err != nil {
@@ -78,7 +61,7 @@ func TestAddairline(t *testing.T) {
 	}
 
 	// Validate the retrieved document
-	assert.Equal(t, airlineData, retrievedData.Data)
+	assert.Equal(t, airlineData, retrievedData)
 
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
@@ -98,13 +81,13 @@ func TestAddairline(t *testing.T) {
 }
 
 func TestAddDuplicateAirline(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
+
 	documentID := "airline_test_duplicate"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
-	airlineData := AirlineData{
+	airlineData := models.Airline{
 		Name:     "Sample Airline",
-		Icao:     "SALL",
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Sample Country",
 	}
@@ -157,12 +140,12 @@ func TestAddDuplicateAirline(t *testing.T) {
 }
 
 func TestAddAirlineWithoutRequiredFields(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
+
 	documentID := "airline_test_invalid_payload"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
-	airlineData := AirlineData{
-		Icao:    "SALL",
+	airlineData := models.Airline{
+		ICAO:    "SALL",
 		Country: "Sample Country",
 	}
 
@@ -186,13 +169,13 @@ func TestAddAirlineWithoutRequiredFields(t *testing.T) {
 }
 
 func TestReadAirline(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
+
 	documentID := "airline_test_read"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
-	airlineData := AirlineData{
+	airlineData := models.Airline{
 		Name:     "Sample Airline",
-		Icao:     "SALL",
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Sample Country",
 	}
@@ -222,20 +205,35 @@ func TestReadAirline(t *testing.T) {
 	}
 
 	// Validate the retrieved data
-	var retrievedData AirlineResponseForSingleDocument
+	var retrievedData models.Airline
 	err = json.NewDecoder(getResp.Body).Decode(&retrievedData)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Now, compare the retrieved data with the expected data
-	if retrievedData.Data != airlineData {
-		t.Errorf("Retrieved data does not match expected data. Expected: %v, Actual: %v", airlineData, retrievedData.Data)
+	if retrievedData != airlineData {
+		t.Errorf("Retrieved data does not match expected data. Expected: %v, Actual: %v", airlineData, retrievedData)
+	}
+	// Clean up (delete the document)
+	deleteReq, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteResp, err := http.DefaultClient.Do(deleteReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer deleteResp.Body.Close()
+
+	// Ensure that the DELETE request was successful (HTTP status 204)
+	if deleteResp.StatusCode != http.StatusNoContent {
+		t.Errorf("Expected status code %d, got %d", http.StatusNoContent, deleteResp.StatusCode)
 	}
 }
 
 func TestReadInvalidAirline(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
+
 	documentID := "airline_test_invalid_id"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
@@ -253,13 +251,13 @@ func TestReadInvalidAirline(t *testing.T) {
 }
 
 func TestUpdateAirline(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
+
 	documentID := "airline_test_update"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
-	airlineData := AirlineData{
+	airlineData := models.Airline{
 		Name:     "Sample Airline",
-		Icao:     "SALL",
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Sample Country",
 	}
@@ -277,10 +275,10 @@ func TestUpdateAirline(t *testing.T) {
 	defer resp.Body.Close()
 
 	// Update the airline (HTTP PUT request)
-	updatedAirlineData := AirlineData{
+	updatedAirlineData := models.Airline{
 		Name:     "Updated Airline",
-		Iata:     "SAL",
-		Icao:     "SALL",
+		IATA:     "SAL",
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Updated Country",
 	}
@@ -320,22 +318,21 @@ func TestUpdateAirline(t *testing.T) {
 	}
 
 	// Validate the retrieved data
-	var retrievedData AirlineResponseForSingleDocument
+	var retrievedData models.Airline
 	err = json.NewDecoder(resp.Body).Decode(&retrievedData)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, updatedAirlineData, retrievedData.Data)
+	assert.Equal(t, updatedAirlineData, retrievedData)
 }
 
 func TestUpdateAirlineWithInvalidData(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
 	documentID := "airline_test_update_invalid_doc"
 	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
 	// Create the airline with invalid data (HTTP POST request)
-	initialAirlineData := AirlineData{
-		Icao:     "SALL",
+	initialAirlineData := models.Airline{
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Sample Country",
 	}
@@ -358,10 +355,9 @@ func TestUpdateAirlineWithInvalidData(t *testing.T) {
 }
 
 func TestDeletAirline(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
-	airlineData := AirlineData{
+	airlineData := models.Airline{
 		Name:     "Sample Airline",
-		Icao:     "SALL",
+		ICAO:     "SALL",
 		Callsign: "SAM",
 		Country:  "Sample Country",
 	}
@@ -405,8 +401,7 @@ func TestDeletAirline(t *testing.T) {
 	}
 }
 
-func TestDeleteInvalidDocument(t *testing.T) {
-	collectionBaseForAirline := "http://127.0.0.1:8080"
+func TestDeleteInvalidDocumentAirline(t *testing.T) {
 	invalidDocumentID := "non_existent_document"
 
 	// Attempt to delete an non existing document (HTTP DELETE request)
@@ -445,7 +440,7 @@ func TestListAirlinesInCountry(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.StatusCode)
 	}
 
-	var result AirlineResponse
+	var result []models.Airline
 	decoder := json.NewDecoder(response.Body)
 	err = decoder.Decode(&result)
 	if err != nil {
@@ -453,7 +448,7 @@ func TestListAirlinesInCountry(t *testing.T) {
 	}
 
 	// Access and validate the retrieved data
-	for _, item := range result.Data {
+	for _, item := range result {
 		if item.Country != country {
 			t.Errorf("Expected country %s, got %s", country, item.Country)
 		}
@@ -479,18 +474,18 @@ func TestListAirlinesInCountryWithPagination(t *testing.T) {
 			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.StatusCode)
 		}
 
-		var result AirlineResponse
+		var result []models.Airline
 		decoder := json.NewDecoder(response.Body)
 		err = decoder.Decode(&result)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if len(result.Data) != pageSize {
-			t.Errorf("Expected %d items in the response, got %d", pageSize, len(result.Data))
+		if len(result) != pageSize {
+			t.Errorf("Expected %d items in the response, got %d", pageSize, len(result))
 		}
 
-		for _, item := range result.Data {
+		for _, item := range result {
 			airlinesList[item.Name] = true
 
 			if item.Country != country {
@@ -517,14 +512,4 @@ func TestListAirlinesInInvalidCountry(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, response.StatusCode)
 	}
 
-	var result AirlineResponse
-	decoder := json.NewDecoder(response.Body)
-	err = decoder.Decode(&result)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(result.Data) != 0 {
-		t.Errorf("Expected 0 items in the response, got %d", len(result.Data))
-	}
 }

@@ -10,15 +10,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -26,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/api/v1/airline/list": {
             "get": {
-                "description": "Get a list of airlines filtered by country",
+                "description": "Get list of Airlines. Optionally, you can filter the list by Country",
                 "produces": [
                     "application/json"
                 ],
@@ -37,20 +29,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Filter by country. Example: 'France'",
+                        "description": "Filter by country\u003cbr\u003eExample: France, United Kingdom, United States",
                         "name": "country",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Number of airlines to return (page size). Example: 10",
+                        "description": "Number of airlines to return (page size).\u003cbr\u003eExample: 10",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Number of airlines to skip (for pagination). Example: 0",
+                        "description": "Number of airlines to skip (for pagination).\u003cbr\u003eExample: 0",
                         "name": "offset",
                         "in": "query"
                     }
@@ -59,7 +50,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Airline"
+                            }
                         }
                     },
                     "500": {
@@ -70,7 +64,7 @@ const docTemplate = `{
         },
         "/api/v1/airline/to-airport": {
             "get": {
-                "description": "Get a list of airlines flying to a specific airport",
+                "description": "Get Airlines flying to specified destination Airport",
                 "produces": [
                     "application/json"
                 ],
@@ -81,20 +75,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Destination airport. Example: 'JFK'",
+                        "description": "Destination airport\u003cbr\u003eExample : SFO, JFK, LAX",
                         "name": "airport",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Number of airlines to return (page size). Example: 10",
+                        "description": "Number of airlines to return (page size)\u003cbr\u003eDefault value : 10",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Number of airlines to skip (for pagination). Example: 0",
+                        "description": "Number of airlines to skip (for pagination)\u003cbr\u003eDefault value : 0",
                         "name": "offset",
                         "in": "query"
                     }
@@ -103,7 +97,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Airline"
+                            }
                         }
                     },
                     "500": {
@@ -114,7 +111,7 @@ const docTemplate = `{
         },
         "/api/v1/airline/{id}": {
             "get": {
-                "description": "Gets a document from the \"airline\" collection based on the provided key.",
+                "description": "Get Airline with specified ID",
                 "produces": [
                     "application/json"
                 ],
@@ -125,7 +122,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Get document by ID.    Example: 'airline_123'",
+                        "description": "Airline ID like airline_10",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -135,7 +132,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "$ref": "#/definitions/models.Airline"
                         }
                     },
                     "404": {
@@ -147,7 +144,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Updates a document in the \"airline\" collection based on the provided key.",
+                "description": "Update Airline with specified ID",
                 "produces": [
                     "application/json"
                 ],
@@ -158,7 +155,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update document by ID.    Example: 'airline_123'",
+                        "description": "Airline ID like airline_10",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -169,7 +166,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBodyForAirline"
+                            "$ref": "#/definitions/models.Airline"
                         }
                     }
                 ],
@@ -177,10 +174,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
-                            }
+                            "$ref": "#/definitions/models.Airline"
                         }
                     },
                     "400": {
@@ -192,7 +186,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Inserts a document into the \"airline\" collection.",
+                "description": "Create Airline with specified ID",
                 "produces": [
                     "application/json"
                 ],
@@ -203,7 +197,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Create document by specifying ID.    Example: airline_123",
+                        "description": "Airline ID like airline_10",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -214,7 +208,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBodyForAirline"
+                            "$ref": "#/definitions/models.Airline"
                         }
                     }
                 ],
@@ -222,7 +216,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponseForAirline"
+                            "$ref": "#/definitions/models.Airline"
                         }
                     },
                     "400": {
@@ -237,7 +231,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes a document in the \"airline\" collection based on the provided key.",
+                "description": "Delete Airline with specified ID",
                 "produces": [
                     "application/json"
                 ],
@@ -248,7 +242,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Deletes a document with the specified key. Example: 'sample_id'",
+                        "description": "Airline ID like airline_10",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -256,10 +250,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
-                        }
+                        "description": "Airline deleted"
                     },
                     "404": {
                         "description": "Airline Document ID Not Found"
@@ -283,20 +274,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Source airport       Example: SFO, LHR, CDG",
+                        "description": "Source airport\u003cbr\u003eExample: SFO, LHR, CDG",
                         "name": "airport",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Number of direct connections to return (page size)      Default value : 10",
+                        "description": "Number of direct connections to return (page size)\u003cbr\u003eDefault value : 10",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Number of direct connections to skip (for pagination)  Default value : 0",
+                        "description": "Number of direct connections to skip (for pagination)\u003cbr\u003eDefault value : 0",
                         "name": "offset",
                         "in": "query"
                     }
@@ -307,7 +298,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                                "$ref": "#/definitions/models.Destination"
                             }
                         }
                     },
@@ -330,20 +321,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Country     Example: United Kingdom, France, United States",
+                        "description": "Country\u003cbr\u003eExample: United Kingdom, France, United States",
                         "name": "country",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Number of airports to return (page size)     Default value : 10",
+                        "description": "Number of airports to return (page size)\u003cbr\u003eDefault value : 10",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Number of airports to skip (for pagination)     Default value : 0",
+                        "description": "Number of airports to skip (for pagination)\u003cbr\u003eDefault value : 0",
                         "name": "offset",
                         "in": "query"
                     }
@@ -354,7 +345,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
+                                "$ref": "#/definitions/models.Airport"
                             }
                         }
                     },
@@ -377,7 +368,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Search document by ID    Example: airport_1273",
+                        "description": "Airport ID like airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -387,7 +378,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "$ref": "#/definitions/models.Airport"
                         }
                     },
                     "404": {
@@ -410,7 +401,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update document by id         Example: airport_1273",
+                        "description": "Airport ID like airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -421,7 +412,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBodyForAirport"
+                            "$ref": "#/definitions/models.Airport"
                         }
                     }
                 ],
@@ -429,10 +420,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
-                            }
+                            "$ref": "#/definitions/models.Airport"
                         }
                     },
                     "400": {
@@ -455,7 +443,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Create document by specifying ID      Example: airport_1273",
+                        "description": "Airport ID like airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -466,7 +454,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBodyForAirport"
+                            "$ref": "#/definitions/models.Airport"
                         }
                     }
                 ],
@@ -474,7 +462,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "$ref": "#/definitions/models.Airport"
                         }
                     },
                     "400": {
@@ -500,7 +488,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Deletes a document with key specified      Example: airport_1273",
+                        "description": "Airport ID like airport_1273",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -508,13 +496,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
-                            }
-                        }
+                        "description": "Airport deleted"
                     },
                     "404": {
                         "description": "Airport Document ID Not Found"
@@ -527,18 +509,18 @@ const docTemplate = `{
         },
         "/api/v1/route/{id}": {
             "get": {
-                "description": "Gets a document from the \"route\" collection based on the provided key.",
+                "description": "Get Route with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Route collection"
                 ],
-                "summary": "Get Document",
+                "summary": "Get Route Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "search document by id",
+                        "description": "Route ID like route_10000",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -548,10 +530,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
-                            }
+                            "$ref": "#/definitions/models.Route"
                         }
                     },
                     "404": {
@@ -563,18 +542,18 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Updates a document in the \"route\" collection based on the provided key.",
+                "description": "Update Route with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Route collection"
                 ],
-                "summary": "Update Document",
+                "summary": "Update Route Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Update document by id",
+                        "description": "Route ID like route_10000",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -585,7 +564,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBodyForRoute"
+                            "$ref": "#/definitions/models.Route"
                         }
                     }
                 ],
@@ -593,10 +572,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
-                            }
+                            "$ref": "#/definitions/models.Route"
                         }
                     },
                     "400": {
@@ -608,18 +584,18 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Inserts a document to the \"route\" collection.",
+                "description": "Create Route with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Route collection"
                 ],
-                "summary": "Insert Document",
+                "summary": "Insert Route Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Create document by specifying ID",
+                        "description": "Route ID like route_10000",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -630,7 +606,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestBodyForRoute"
+                            "$ref": "#/definitions/models.Route"
                         }
                     }
                 ],
@@ -638,7 +614,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/responses.TravelSampleResponse"
+                            "$ref": "#/definitions/models.Route"
                         }
                     },
                     "400": {
@@ -653,18 +629,18 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes a document in the \"route\" collection based on the provided key.",
+                "description": "Delete Route with specified ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Route collection"
                 ],
-                "summary": "Deletes Document",
+                "summary": "Delete Route Document",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Deletes a document with key specified",
+                        "description": "Route ID like route_10000",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -672,13 +648,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/responses.TravelSampleResponse"
-                            }
-                        }
+                        "description": "Route Deleted"
                     },
                     "404": {
                         "description": "Route Document ID Not Found"
@@ -691,7 +661,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.RequestBodyForAirline": {
+        "models.Airline": {
             "type": "object",
             "required": [
                 "country",
@@ -701,27 +671,27 @@ const docTemplate = `{
             "properties": {
                 "callsign": {
                     "type": "string",
-                    "default": "SampleCallsign"
+                    "example": "SAF"
                 },
                 "country": {
                     "type": "string",
-                    "default": "SampleCountry"
+                    "example": "United States"
                 },
                 "iata": {
                     "type": "string",
-                    "default": "SMP"
+                    "example": "SA"
                 },
                 "icao": {
                     "type": "string",
-                    "default": "SMPL"
+                    "example": "SAF"
                 },
                 "name": {
                     "type": "string",
-                    "default": "SampleName"
+                    "example": "SampleName"
                 }
             }
         },
-        "models.RequestBodyForAirport": {
+        "models.Airport": {
             "type": "object",
             "required": [
                 "airportname",
@@ -747,18 +717,7 @@ const docTemplate = `{
                     "example": "SAA"
                 },
                 "geo": {
-                    "type": "object",
-                    "properties": {
-                        "alt": {
-                            "type": "number"
-                        },
-                        "lat": {
-                            "type": "number"
-                        },
-                        "lon": {
-                            "type": "number"
-                        }
-                    }
+                    "$ref": "#/definitions/models.Geo"
                 },
                 "icao": {
                     "type": "string",
@@ -770,74 +729,91 @@ const docTemplate = `{
                 }
             }
         },
-        "models.RequestBodyForRoute": {
+        "models.Destination": {
             "type": "object",
             "properties": {
-                "airline": {
-                    "type": "string"
+                "destinationairport": {
+                    "type": "string",
+                    "example": "JFK"
+                }
+            }
+        },
+        "models.Geo": {
+            "type": "object",
+            "properties": {
+                "alt": {
+                    "type": "number",
+                    "example": 48.864716
                 },
-                "airlineid": {
-                    "type": "string"
+                "lat": {
+                    "type": "number",
+                    "example": 2.349014
+                },
+                "lon": {
+                    "type": "number",
+                    "example": 92
+                }
+            }
+        },
+        "models.Route": {
+            "type": "object",
+            "required": [
+                "airline",
+                "airline_id",
+                "destinationairport",
+                "sourceairport"
+            ],
+            "properties": {
+                "airline": {
+                    "type": "string",
+                    "example": "AF"
+                },
+                "airline_id": {
+                    "type": "string",
+                    "example": "airline_10"
                 },
                 "destinationairport": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "JFK"
                 },
                 "distance": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 4151.79
                 },
                 "equipment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "CRJ"
                 },
                 "schedule": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "day": {
-                                "type": "integer"
-                            },
-                            "flight": {
-                                "type": "string"
-                            },
-                            "utc": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/models.Schedule"
                     }
                 },
                 "sourceairport": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SFO"
                 },
                 "stops": {
-                    "type": "integer"
-                }
-            }
-        },
-        "responses.TravelSampleResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "responses.TravelSampleResponseForAirline": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.RequestBodyForAirline"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Success"
-                },
-                "status": {
                     "type": "integer",
-                    "example": 200
+                    "example": 0
+                }
+            }
+        },
+        "models.Schedule": {
+            "type": "object",
+            "properties": {
+                "day": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "flight": {
+                    "type": "string",
+                    "example": "XYZ123"
+                },
+                "utc": {
+                    "type": "string",
+                    "example": "14:30"
                 }
             }
         }
@@ -851,7 +827,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Golang Quickstart using Gin Gonic",
-	Description:      "Couchbase Golang Quickstart using Gin Gonic. This API provides operations for multiple collections in the database, including CRUD operations and query examples.",
+	Description:      "\nThis API provides operations for multiple collections in the database, including CRUD operations and query examples.\nWe have a visual representation of the API documentation using Swagger, which allows you to interact with the API's endpoints directly through the browser. It provides a clear view of the API, including endpoints, HTTP methods, request parameters, and response objects.\nClick on an individual endpoint to expand it and see detailed information. This includes the endpoint's description, possible response status codes, and the request parameters it accepts.\nTrying Out the API\nYou can try out an API by clicking on the \"Try it out\" button next to the endpoints.\n- Parameters: If an endpoint requires parameters, Swagger UI provides input boxes for you to fill in. This could include path parameters, query strings, headers, or the body of a POST/PUT request.\n- Execution: Once you've inputted all the necessary parameters, you can click the \"Execute\" button to make a live API call. Swagger UI will send the request to the API and display the response directly in the documentation. This includes the response code, response headers, and response body.\nModels\n<div style=\"float: left;\">Swagger documents the structure of request and response bodies using models. These models define the expected data structure using JSON schema and are extremely helpful in understanding what data to send and expect.\nFor details on the API, please check the tutorial on the Couchbase Developer Portal: https://developer.couchbase.com/tutorial-quickstart-golang-gin-gonic",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
