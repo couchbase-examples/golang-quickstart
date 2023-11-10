@@ -24,7 +24,6 @@ func InitializeCluster() *gocb.Cluster {
 	// Load environment variables from a .env file
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
-		os.Exit(1)
 	}
 
 	// Retrieve environment variables
