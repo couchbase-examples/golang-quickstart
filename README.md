@@ -9,7 +9,7 @@ Full documentation can be found on the [Couchbase Developer Portal](https://deve
 
 ## Prerequisites
 
-To run this prebuilt project, you will need:
+To run this application, you will need:
 
 - Couchbase Server (7 or higher) with [travel-sample](https://docs.couchbase.com/go-sdk/current/ref/travel-app-data-model.html) bucket loaded.
   - [Couchbase Capella](https://www.couchbase.com/products/capella/) is the easiest way to get started.
@@ -59,12 +59,14 @@ go run .
 - Build the Docker image
 
 ```sh
+# Execute this command in the project's root directory
 docker build -t couchbase-gin-gonic-quickstart .
 ```
 
 - Run the Docker image
 
 ```sh
+# Execute this command in the project's root directory
 docker run -it --env-file .env -p 8080:8080 couchbase-gin-gonic-quickstart
 ```
 
@@ -75,6 +77,7 @@ docker run -it --env-file .env -p 8080:8080 couchbase-gin-gonic-quickstart
 To run the standard unit tests, use the following commands:
 
 ```sh
+# Run standard unit tests for the project
 cd test
 go test -v
 ```
@@ -87,7 +90,7 @@ For this quickstart, we use three collections, `airport`, `airline` and `routes`
 
 ## Appendix: Running Self Managed Couchbase Cluster
 
-If you are running this quickstart with a self managed Couchbase cluster, you need to [load](https://docs.couchbase.com/server/current/manage/manage-settings/install-sample-buckets.html) the travel-sample data bucket in your cluster and generate the credentials for the bucket.
+If you are running this quickstart with a self managed Couchbase cluster, you need to [load](https://docs.couchbase.com/server/current/manage/manage-settings/install-sample-buckets.html) the travel-sample data bucket in your cluster and generate the credentials for the bucket by [creating a user](https://docs.couchbase.com/server/current/manage/manage-security/manage-users-and-roles.html#add-a-user)
 
 You need to update the connection string and the credentials in the `.env` file in the source folder.
 
