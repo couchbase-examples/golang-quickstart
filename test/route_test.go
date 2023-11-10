@@ -333,6 +333,22 @@ func TestUpdateRoute(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, updatedRouteData, retrievedData)
+
+	// Clean up (delete the document)
+	deleteReq, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteResp, err := http.DefaultClient.Do(deleteReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer deleteResp.Body.Close()
+
+	// Ensure that the DELETE request was successful (HTTP status 204)
+	if deleteResp.StatusCode != http.StatusNoContent {
+		t.Errorf("Expected status code %d, got %d", http.StatusNoContent, deleteResp.StatusCode)
+	}
 }
 
 func TestUpdateRouteWithInvalidData(t *testing.T) {
