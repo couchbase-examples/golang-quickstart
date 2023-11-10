@@ -3,34 +3,33 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"net/http"
-	"testing"
 
 	"github.com/couchbase-examples/golang-quickstart/models"
+
+	"fmt"
+	"net/http"
+
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var collectionBaseForAirport = "http://127.0.0.1:8080"
+var collectionBaseForAirline = "http://127.0.0.1:8080"
 
-func TestAddairport(t *testing.T) {
+func TestAddairline(t *testing.T) {
+	documentID := "airline_test_add"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
-	documentID := "airport_test_add"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
-
-	// Define the airport data
-	airportData := models.Airport{
-		AirportName: "SampleAirport",
-		City:        "SampleCity",
-		Country:     "United Kingdom",
-		FAA:         "SAA",
-		ICAO:        "SAAA",
-		TZ:          "Europe/Paris",
+	// Define the airline data
+	airlineData := models.Airline{
+		Name:     "Sample Airline",
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Sample Country",
 	}
 
 	// Convert the data to JSON
-	requestData, err := json.Marshal(airportData)
+	requestData, err := json.Marshal(airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +54,7 @@ func TestAddairport(t *testing.T) {
 	defer getResp.Body.Close()
 
 	// Deserialize the response JSON
-	var retrievedData models.Airport
+	var retrievedData models.Airline
 	decoder := json.NewDecoder(getResp.Body)
 	err = decoder.Decode(&retrievedData)
 	if err != nil {
@@ -63,7 +62,7 @@ func TestAddairport(t *testing.T) {
 	}
 
 	// Validate the retrieved document
-	assert.Equal(t, airportData, retrievedData)
+	assert.Equal(t, airlineData, retrievedData)
 
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
@@ -81,25 +80,26 @@ func TestAddairport(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusNoContent, deleteResp.StatusCode)
 	}
 }
-func TestAddDuplicateairport(t *testing.T) {
-	documentID := "airport_test_duplicate"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
 
-	airportData := models.Airport{
-		AirportName: "Test Airport",
-		City:        "Test City",
-		Country:     "Test Country",
-		FAA:         "TAA",
-		ICAO:        "TAAS",
-		TZ:          "Europe/Berlin",
+func TestAddDuplicateAirline(t *testing.T) {
+
+	documentID := "airline_test_duplicate"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
+
+	airlineData := models.Airline{
+		Name:     "Sample Airline",
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Sample Country",
 	}
 
-	requestData, err := json.Marshal(airportData)
+	// Convert the data to JSON
+	requestData, err := json.Marshal(airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Create the initial airport (HTTP POST request)
+	// Create the initial airline (HTTP POST request)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
 	if err != nil {
 		t.Fatal(err)
@@ -122,6 +122,7 @@ func TestAddDuplicateairport(t *testing.T) {
 	if resp.StatusCode != http.StatusConflict {
 		t.Errorf("Expected status code %d, got %d", http.StatusConflict, resp.StatusCode)
 	}
+
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -139,23 +140,23 @@ func TestAddDuplicateairport(t *testing.T) {
 	}
 }
 
-func TestAddairportWithoutRequiredFields(t *testing.T) {
-	documentID := "airport_test_invalid"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
-	// Missing Required Airport Name field
-	airportData := models.Airport{
-		City:    "Test City",
-		Country: "Test Country",
-		FAA:     "TAA",
-		ICAO:    "TAAS",
-		TZ:      "Europe/Berlin",
+func TestAddAirlineWithoutRequiredFields(t *testing.T) {
+
+	documentID := "airline_test_invalid_payload"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
+
+	airlineData := models.Airline{
+		ICAO:    "SALL",
+		Country: "Sample Country",
 	}
-	requestData, err := json.Marshal(airportData)
+
+	// Convert the data to JSON
+	requestData, err := json.Marshal(airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Create an airport without required fields (HTTP POST request)
+	// Create an airline without required fields (HTTP POST request)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
 	if err != nil {
 		t.Fatal(err)
@@ -168,52 +169,53 @@ func TestAddairportWithoutRequiredFields(t *testing.T) {
 	}
 }
 
-func TestReadairport(t *testing.T) {
+func TestReadAirline(t *testing.T) {
 
-	documentID := "airport_test_read"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
+	documentID := "airline_test_read"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
-	airportData := models.Airport{
-		AirportName: "Test Airport",
-		City:        "Test City",
-		Country:     "Test Country",
-		FAA:         "TAA",
-		ICAO:        "TAAS",
-		TZ:          "Europe/Berlin",
+	airlineData := models.Airline{
+		Name:     "Sample Airline",
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Sample Country",
 	}
 
-	requestData, err := json.Marshal(airportData)
+	requestData, err := json.Marshal(airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Create the airport (HTTP POST request)
+	// Create the airline (HTTP POST request)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer resp.Body.Close()
 
-	// Fetch the airport (HTTP GET request)
-	resp, err = http.Get(url)
+	// Fetch the airline (HTTP GET request)
+	getResp, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer getResp.Body.Close()
 
 	// Ensure that the GET request was successful (HTTP status 200)
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, resp.StatusCode)
+	if getResp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, getResp.StatusCode)
 	}
 
 	// Validate the retrieved data
-	var retrievedData models.Airport
-	err = json.NewDecoder(resp.Body).Decode(&retrievedData)
+	var retrievedData models.Airline
+	err = json.NewDecoder(getResp.Body).Decode(&retrievedData)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, airportData, retrievedData)
 
+	// Now, compare the retrieved data with the expected data
+	if retrievedData != airlineData {
+		t.Errorf("Retrieved data does not match expected data. Expected: %v, Actual: %v", airlineData, retrievedData)
+	}
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -231,11 +233,12 @@ func TestReadairport(t *testing.T) {
 	}
 }
 
-func TestReadInvalidairport(t *testing.T) {
-	documentID := "airport_test_invalid_id"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
+func TestReadInvalidAirline(t *testing.T) {
 
-	// Fetch an invalid airport (HTTP GET request)
+	documentID := "airline_test_invalid_id"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
+
+	// Fetch an invalid airline (HTTP GET request)
 	resp, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
@@ -248,42 +251,40 @@ func TestReadInvalidairport(t *testing.T) {
 	}
 }
 
-func TestUpdateairport(t *testing.T) {
-	documentID := "airport_test_update"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
+func TestUpdateAirline(t *testing.T) {
 
-	initialAirportData := models.Airport{
-		AirportName: "Test Airport",
-		City:        "Test City",
-		Country:     "Test Country",
-		FAA:         "TAA",
-		ICAO:        "TAAS",
-		TZ:          "Europe/Berlin",
+	documentID := "airline_test_update"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
+
+	airlineData := models.Airline{
+		Name:     "Sample Airline",
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Sample Country",
 	}
 
-	requestData, err := json.Marshal(initialAirportData)
+	requestData, err := json.Marshal(airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Create the airport (HTTP POST request)
+	// Create the airline (HTTP POST request)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer resp.Body.Close()
 
-	// Update the airport (HTTP PUT request)
-	updatedAirportData := models.Airport{
-		AirportName: "Updated Airport",
-		City:        "Updated City",
-		Country:     "Updated Country",
-		FAA:         "TAA",
-		ICAO:        "TAAS",
-		TZ:          "USA",
+	// Update the airline (HTTP PUT request)
+	updatedAirlineData := models.Airline{
+		Name:     "Updated Airline",
+		IATA:     "SAL",
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Updated Country",
 	}
 
-	updatedData, err := json.Marshal(updatedAirportData)
+	updatedData, err := json.Marshal(updatedAirlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -305,7 +306,7 @@ func TestUpdateairport(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, updateResp.StatusCode)
 	}
 
-	// Fetch the updated airport (HTTP GET request)
+	// Fetch the updated airline (HTTP GET request)
 	resp, err = http.Get(url)
 	if err != nil {
 		t.Fatal(err)
@@ -318,29 +319,26 @@ func TestUpdateairport(t *testing.T) {
 	}
 
 	// Validate the retrieved data
-	var retrievedData models.Airport
+	var retrievedData models.Airline
 	err = json.NewDecoder(resp.Body).Decode(&retrievedData)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, updatedAirportData, retrievedData)
+	assert.Equal(t, updatedAirlineData, retrievedData)
 }
 
-func TestUpdateAirportWithInvalidData(t *testing.T) {
-
-	documentID := "airport_test_update_invalid_doc"
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
+func TestUpdateAirlineWithInvalidData(t *testing.T) {
+	documentID := "airline_test_update_invalid_doc"
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
 
 	// Create the airline with invalid data (HTTP POST request)
-	airportData := models.Airport{
-		City:    "Test City",
-		Country: "Test Country",
-		FAA:     "TAA",
-		ICAO:    "TAAS",
-		TZ:      "Europe/Berlin",
+	initialAirlineData := models.Airline{
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Sample Country",
 	}
 
-	requestData, err := json.Marshal(airportData)
+	requestData, err := json.Marshal(initialAirlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -357,20 +355,18 @@ func TestUpdateAirportWithInvalidData(t *testing.T) {
 	}
 }
 
-func TestDeletAirport(t *testing.T) {
-	airportData := models.Airport{
-		AirportName: "Test Airport",
-		City:        "Test City",
-		Country:     "Test Country",
-		FAA:         "TAA",
-		ICAO:        "TAAS",
-		TZ:          "Europe/Berlin",
+func TestDeletAirline(t *testing.T) {
+	airlineData := models.Airline{
+		Name:     "Sample Airline",
+		ICAO:     "SALL",
+		Callsign: "SAM",
+		Country:  "Sample Country",
 	}
-	documentID := "airport_test_delete"
+	documentID := "airline_test_delete"
 
 	// Create the document (HTTP POST request)
-	url := collectionBaseForAirport + "/api/v1/airport/" + documentID
-	requestData, err := json.Marshal(airportData)
+	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
+	requestData, err := json.Marshal(airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -387,7 +383,7 @@ func TestDeletAirport(t *testing.T) {
 	}
 
 	// Delete the created document (HTTP DELETE request)
-	deleteURL := collectionBaseForAirport + "/api/v1/airport/" + documentID
+	deleteURL := collectionBaseForAirline + "/api/v1/airline/" + documentID
 	req, err := http.NewRequest("DELETE", deleteURL, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -406,11 +402,11 @@ func TestDeletAirport(t *testing.T) {
 	}
 }
 
-func TestDeleteAirportInvalidDocument(t *testing.T) {
+func TestDeleteInvalidDocumentAirline(t *testing.T) {
 	invalidDocumentID := "non_existent_document"
 
 	// Attempt to delete an non existing document (HTTP DELETE request)
-	url := collectionBaseForAirport + "/api/v1/airport/" + invalidDocumentID
+	url := collectionBaseForAirline + "/api/v1/airline/" + invalidDocumentID
 
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
@@ -430,14 +426,43 @@ func TestDeleteAirportInvalidDocument(t *testing.T) {
 	}
 }
 
-func TestListAirportsInCountryWithPagination(t *testing.T) {
+func TestListAirlinesInCountry(t *testing.T) {
+	country := "France"
+
+	url := "http://127.0.0.1:8080/api/v1/airline/list?country=" + country
+	response, err := http.Get(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.StatusCode)
+	}
+
+	var result []models.Airline
+	decoder := json.NewDecoder(response.Body)
+	err = decoder.Decode(&result)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Access and validate the retrieved data
+	for _, item := range result {
+		if item.Country != country {
+			t.Errorf("Expected country %s, got %s", country, item.Country)
+		}
+	}
+}
+
+func TestListAirlinesInCountryWithPagination(t *testing.T) {
 	country := "France"
 	pageSize := 1
 	iterations := 2
-	airportsList := make(map[string]bool)
+	airlinesList := make(map[string]bool)
 
 	for i := 0; i < iterations; i++ {
-		url := fmt.Sprintf("http://127.0.0.1:8080/api/v1/airport/list?country=%s&limit=%d&offset=%d", country, pageSize, pageSize*i)
+		url := fmt.Sprintf("http://127.0.0.1:8080/api/v1/airline/list?country=%s&limit=%d&offset=%d", country, pageSize, pageSize*i)
 
 		response, err := http.Get(url)
 		if err != nil {
@@ -449,7 +474,7 @@ func TestListAirportsInCountryWithPagination(t *testing.T) {
 			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.StatusCode)
 		}
 
-		var result []models.Airport
+		var result []models.Airline
 		decoder := json.NewDecoder(response.Body)
 		err = decoder.Decode(&result)
 		if err != nil {
@@ -461,7 +486,7 @@ func TestListAirportsInCountryWithPagination(t *testing.T) {
 		}
 
 		for _, item := range result {
-			airportsList[item.AirportName] = true
+			airlinesList[item.Name] = true
 
 			if item.Country != country {
 				t.Errorf("Expected country %s, got %s", country, item.Country)
@@ -469,13 +494,13 @@ func TestListAirportsInCountryWithPagination(t *testing.T) {
 		}
 	}
 
-	if len(airportsList) != pageSize*iterations {
-		t.Errorf("Expected %d unique airport names in the response, got %d", pageSize*iterations, len(airportsList))
+	if len(airlinesList) != pageSize*iterations {
+		t.Errorf("Expected %d unique airline names in the response, got %d", pageSize*iterations, len(airlinesList))
 	}
 }
 
-func TestListAirportsInInvalidCountry(t *testing.T) {
-	url := "http://127.0.0.1:8080/api/v1/airport/list?country=invalid"
+func TestListAirlinesInInvalidCountry(t *testing.T) {
+	url := "http://127.0.0.1:8080/api/v1/airline/list?country=invalid"
 
 	response, err := http.Get(url)
 	if err != nil {

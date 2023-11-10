@@ -1,4 +1,4 @@
-module src
+module github.com/couchbase-examples/golang-quickstart
 
 go 1.19
 

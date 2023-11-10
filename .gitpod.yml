@@ -7,7 +7,7 @@ tasks:
   - name: Log use
     command: curl -s 'https://da-demo-images.s3.amazonaws.com/runItNow_outline.png?couchbase-example=golang-quickstart-repo&source=gitpod' > /dev/null
   - name: Start app
-    command: cd src && go run .
+    command: cd github.com/couchbase-examples/golang-quickstart && go run .
 
 # exposed ports
 ports:

@@ -3,7 +3,8 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"src/models"
+
+	"github.com/couchbase-examples/golang-quickstart/models"
 
 	"fmt"
 	"net/http"

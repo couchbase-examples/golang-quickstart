@@ -1,6 +1,6 @@
 # Quickstart in Couchbase with Golang  and Gin Gonic
 
-#### Build a REST API with Couchbase's Golang SDK 2.5 and Gin Gonic
+#### Build a REST API with Couchbase's Golang SDK 2.6 and Gin Gonic
 
 > This repo is designed to teach you how to connect to a Couchbase Capella cluster to create, read, update, and delete documents and how to write simple parametrized SQL++ queries using the built-in travel-sample bucket. If you want to run this tutorial using a self managed Couchbase cluster, please refer to the [appendix](#appendix-running-self-managed-couchbase-cluster).
 
@@ -51,7 +51,6 @@ At this point, we have installed the dependencies, loaded the travel-sample data
 The application will run on port 8080 of your local machine (http://localhost:8080). You will find the Swagger documentation of the API.
 
 ```sh
-cd src
 go run .
 ```
 
@@ -60,7 +59,6 @@ go run .
 - Build the Docker image
 
 ```sh
-cd src
 docker build -t couchbase-gin-gonic-quickstart .
 ```
 
