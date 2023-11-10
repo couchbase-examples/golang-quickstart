@@ -2,7 +2,7 @@ name: Go Tests
 on:
   push:
     branches:
-      - golang-quickstart-v2
+      - main
   pull_request:
   workflow_dispatch:
   schedule:
