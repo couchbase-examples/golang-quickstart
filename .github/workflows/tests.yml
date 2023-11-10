@@ -12,8 +12,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      CONNECTION_STRING: ${{ vars.CONNECTION_STRING }}
-      USERNAME: ${{ vars.USERNAME }}
+      CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+      USERNAME: ${{ secrets.USERNAME }}
       PASSWORD: ${{ secrets.PASSWORD }}
     steps:
       - uses: actions/checkout@v3
