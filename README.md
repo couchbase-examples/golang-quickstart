@@ -9,7 +9,7 @@ Full documentation can be found on the [Couchbase Developer Portal](https://deve
 
 ## Prerequisites
 
-To run this application, you will need:
+To run this prebuilt application, you will need:
 
 - Couchbase Server (7 or higher) with [travel-sample](https://docs.couchbase.com/go-sdk/current/ref/travel-app-data-model.html) bucket loaded.
   - [Couchbase Capella](https://www.couchbase.com/products/capella/) is the easiest way to get started.
