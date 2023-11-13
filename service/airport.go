@@ -17,18 +17,18 @@ type IAirportService interface {
 
 type AirportService struct {
 	collectionName string
-	sharedScope    *gocb.Scope
+	scope          *gocb.Scope
 }
 
-func NewAirportService(sharedScope *gocb.Scope) *AirportService {
+func NewAirportService(scope *gocb.Scope) *AirportService {
 	return &AirportService{
 		collectionName: "airport",
-		sharedScope:    sharedScope,
+		scope:          scope,
 	}
 }
 
 func (s *AirportService) CreateAirport(docKey string, data *models.Airport) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Insert(docKey, data, nil)
+	_, err := s.scope.Collection(s.collectionName).Insert(docKey, data, nil)
 	if err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func (s *AirportService) CreateAirport(docKey string, data *models.Airport) erro
 }
 
 func (s *AirportService) GetAirport(docKey string) (*models.Airport, error) {
-	getResult, err := s.sharedScope.Collection(s.collectionName).Get(docKey, nil)
+	getResult, err := s.scope.Collection(s.collectionName).Get(docKey, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (s *AirportService) GetAirport(docKey string) (*models.Airport, error) {
 }
 
 func (s *AirportService) UpdateAirport(docKey string, data *models.Airport) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Upsert(docKey, data, nil)
+	_, err := s.scope.Collection(s.collectionName).Upsert(docKey, data, nil)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (s *AirportService) UpdateAirport(docKey string, data *models.Airport) erro
 }
 
 func (s *AirportService) DeleteAirport(docKey string) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Remove(docKey, nil)
+	_, err := s.scope.Collection(s.collectionName).Remove(docKey, nil)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (s *AirportService) DeleteAirport(docKey string) error {
 }
 
 func (s *AirportService) QueryAirport(query string) ([]models.Airport, error) {
-	queryResult, err := s.sharedScope.Query(query, nil)
+	queryResult, err := s.scope.Query(query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (s *AirportService) QueryAirport(query string) ([]models.Airport, error) {
 }
 
 func (s *AirportService) QueryDirectConnectionAirport(query string) ([]models.Destination, error) {
-	queryResult, err := s.sharedScope.Query(query, nil)
+	queryResult, err := s.scope.Query(query, nil)
 	if err != nil {
 		return nil, err
 	}

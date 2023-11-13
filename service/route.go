@@ -15,18 +15,18 @@ type IRouteService interface {
 
 type RouteService struct {
 	collectionName string
-	sharedScope    *gocb.Scope
+	scope          *gocb.Scope
 }
 
-func NewRouteService(sharedScope *gocb.Scope) *RouteService {
+func NewRouteService(scope *gocb.Scope) *RouteService {
 	return &RouteService{
 		collectionName: "route",
-		sharedScope:    sharedScope,
+		scope:          scope,
 	}
 }
 
 func (s *RouteService) CreateRoute(docKey string, data *models.Route) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Insert(docKey, data, nil)
+	_, err := s.scope.Collection(s.collectionName).Insert(docKey, data, nil)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (s *RouteService) CreateRoute(docKey string, data *models.Route) error {
 }
 
 func (s *RouteService) GetRoute(docKey string) (*models.Route, error) {
-	getResult, err := s.sharedScope.Collection(s.collectionName).Get(docKey, nil)
+	getResult, err := s.scope.Collection(s.collectionName).Get(docKey, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (s *RouteService) GetRoute(docKey string) (*models.Route, error) {
 }
 
 func (s *RouteService) UpdateRoute(docKey string, data *models.Route) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Upsert(docKey, data, nil)
+	_, err := s.scope.Collection(s.collectionName).Upsert(docKey, data, nil)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (s *RouteService) UpdateRoute(docKey string, data *models.Route) error {
 }
 
 func (s *RouteService) DeleteRoute(docKey string) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Remove(docKey, nil)
+	_, err := s.scope.Collection(s.collectionName).Remove(docKey, nil)
 	if err != nil {
 		return err
 	}

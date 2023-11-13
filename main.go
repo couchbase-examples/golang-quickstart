@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/couchbase-examples/golang-quickstart/config"
 	"github.com/couchbase-examples/golang-quickstart/controllers"
 	_ "github.com/couchbase-examples/golang-quickstart/controllers"
 	"github.com/couchbase-examples/golang-quickstart/db"
@@ -10,8 +9,6 @@ import (
 	services "github.com/couchbase-examples/golang-quickstart/service"
 
 	"github.com/gin-gonic/gin"
-	//swaggerFiles "github.com/swaggo/files"
-	//ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Golang Quickstart using Gin Gonic
@@ -35,21 +32,20 @@ func main() {
 	// Initialize the cluster
 	cluster := db.InitializeCluster()
 
-	// Initialize the shared scope and pass it to the config package
-	sharedScope := db.GetScope(cluster)
-	config.InitializeSharedScope(sharedScope)
+	// Initialize the scope
+	scope := db.GetScope(cluster)
 
 	// Create service instances
-	airlineService := services.NewAirlineService(sharedScope)
-	airportService := services.NewAirportService(sharedScope)
-	routeService := services.NewRouteService(sharedScope)
+	airlineService := services.NewAirlineService(scope)
+	airportService := services.NewAirportService(scope)
+	routeService := services.NewRouteService(scope)
 
 	// Create controller instances
 	airlineController := controllers.NewAirlineController(airlineService)
 	airportController := controllers.NewAirportController(airportService)
 	routeController := controllers.NewRouteController(routeService)
 
-	// Create a Controllers struct to hold controller instances
+	// Pass to  Controllers struct to hold controller instances
 	controllers := routes.Controllers{
 		AirlineController: airlineController,
 		AirportController: airportController,

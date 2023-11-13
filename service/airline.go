@@ -16,18 +16,18 @@ type IAirlineService interface {
 
 type AirlineService struct {
 	collectionName string
-	sharedScope    *gocb.Scope
+	scope          *gocb.Scope
 }
 
-func NewAirlineService(sharedScope *gocb.Scope) *AirlineService {
+func NewAirlineService(scope *gocb.Scope) *AirlineService {
 	return &AirlineService{
 		collectionName: "airline",
-		sharedScope:    sharedScope,
+		scope:          scope,
 	}
 }
 
 func (s *AirlineService) CreateAirline(docKey string, data *models.Airline) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Insert(docKey, data, nil)
+	_, err := s.scope.Collection(s.collectionName).Insert(docKey, data, nil)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (s *AirlineService) CreateAirline(docKey string, data *models.Airline) erro
 }
 
 func (s *AirlineService) GetAirline(docKey string) (*models.Airline, error) {
-	getResult, err := s.sharedScope.Collection(s.collectionName).Get(docKey, nil)
+	getResult, err := s.scope.Collection(s.collectionName).Get(docKey, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (s *AirlineService) GetAirline(docKey string) (*models.Airline, error) {
 }
 
 func (s *AirlineService) UpdateAirline(docKey string, data *models.Airline) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Upsert(docKey, data, nil)
+	_, err := s.scope.Collection(s.collectionName).Upsert(docKey, data, nil)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (s *AirlineService) UpdateAirline(docKey string, data *models.Airline) erro
 }
 
 func (s *AirlineService) DeleteAirline(docKey string) error {
-	_, err := s.sharedScope.Collection(s.collectionName).Remove(docKey, nil)
+	_, err := s.scope.Collection(s.collectionName).Remove(docKey, nil)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (s *AirlineService) DeleteAirline(docKey string) error {
 }
 
 func (s *AirlineService) QueryAirline(query string) ([]models.Airline, error) {
-	queryResult, err := s.sharedScope.Query(query, nil)
+	queryResult, err := s.scope.Query(query, nil)
 	if err != nil {
 		return nil, err
 	}
