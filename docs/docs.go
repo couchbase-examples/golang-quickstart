@@ -18,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/api/v1/airline/list": {
             "get": {
-                "description": "Get list of Airlines. Optionally, you can filter the list by Country",
+                "description": "Get list of Airlines. Optionally, you can filter the list by Country\u003cbr\u003e\u003cbr\u003eThis provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airline_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `get` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -64,7 +64,7 @@ const docTemplate = `{
         },
         "/api/v1/airline/to-airport": {
             "get": {
-                "description": "Get Airlines flying to specified destination Airport",
+                "description": "Get Airlines flying to specified destination Airport\u003cbr\u003e\u003cbr\u003eThis provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airline_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `post` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -111,7 +111,7 @@ const docTemplate = `{
         },
         "/api/v1/airline/{id}": {
             "get": {
-                "description": "Get Airline with specified ID",
+                "description": "Get Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to get a document with specified ID.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airline_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `get` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -144,7 +144,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update Airline with specified ID",
+                "description": "Update Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to upsert a document with specified ID.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airline_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `put` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -186,7 +186,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create Airline with specified ID",
+                "description": "Create Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airline_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `post` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -231,7 +231,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete Airline with specified ID",
+                "description": "Delete Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to delete a document with specified ID.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airline_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `delete` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -263,7 +263,7 @@ const docTemplate = `{
         },
         "/api/v1/airport/direct-connections": {
             "get": {
-                "description": "Get Direct Connections from specified Airport",
+                "description": "Get Direct Connections from specified Airport\u003cbr\u003e\u003cbr\u003eThis provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airport_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `get` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -310,7 +310,7 @@ const docTemplate = `{
         },
         "/api/v1/airport/list": {
             "get": {
-                "description": "Get list of Airports. Optionally, you can filter the list by Country",
+                "description": "Get list of Airports. Optionally, you can filter the list by Country\u003cbr\u003e\u003cbr\u003eThis provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airport_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `get` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -323,8 +323,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Country\u003cbr\u003eExample: United Kingdom, France, United States",
                         "name": "country",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -357,7 +356,7 @@ const docTemplate = `{
         },
         "/api/v1/airport/{id}": {
             "get": {
-                "description": "Get Airport with specified ID",
+                "description": "Get Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airport_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `get` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -390,7 +389,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update Airport with specified ID",
+                "description": "Update Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airport_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `put` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -432,7 +431,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create Airport with specified ID",
+                "description": "Create Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airport_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `post` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -477,7 +476,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete Airport with specified ID",
+                "description": "Delete Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/airport_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `delete` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -509,7 +508,7 @@ const docTemplate = `{
         },
         "/api/v1/route/{id}": {
             "get": {
-                "description": "Get Route with specified ID",
+                "description": "Get Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/route_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `get` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -542,7 +541,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update Route with specified ID",
+                "description": "Update Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/route_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `put` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -584,7 +583,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create Route with specified ID",
+                "description": "Create Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/route_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `post` + "`" + `",
                 "produces": [
                     "application/json"
                 ],
@@ -629,7 +628,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete Route with specified ID",
+                "description": "Delete Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using Key Value operations in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: ` + "`" + `controller/route_controller.go` + "`" + `\u003cbr\u003e\u003cbr\u003eMethod: ` + "`" + `delete` + "`" + `",
                 "produces": [
                     "application/json"
                 ],

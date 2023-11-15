@@ -9,7 +9,7 @@ Full documentation can be found on the [Couchbase Developer Portal](https://deve
 
 ## Prerequisites
 
-To run this prebuilt application, you will need:
+To run this prebuilt project, you will need:
 
 - Couchbase Server (7 or higher) with [travel-sample](https://docs.couchbase.com/go-sdk/current/ref/travel-app-data-model.html) bucket loaded.
   - [Couchbase Capella](https://www.couchbase.com/products/capella/) is the easiest way to get started.
@@ -96,7 +96,3 @@ You need to update the connection string and the credentials in the `.env` file 
 
 > Note: Couchbase Server must be installed and running prior to running this app.
 
-
-## Conclusion
-
-Setting up a basic REST API in Golang and Gin Gonic with Couchbase is fairly simple,this project when run will showcase basic CRUD operations along with executing [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) which is used in most applications.

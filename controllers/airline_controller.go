@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,7 @@ func NewAirlineController(airlineService services.IAirlineService) *AirlineContr
 }
 
 // @Summary      Insert Document
-// @Description  Create Airline with specified ID
+// @Description  Create Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airline_controller.go`<br><br>Method: `post`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        id path string true "Airline ID like airline_10"
@@ -64,7 +63,7 @@ func (ac *AirlineController) InsertDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Get Airline Document
-// @Description  Get Airline with specified ID
+// @Description  Get Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to get a document with specified ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `get`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        id path string true "Airline ID like airline_10"
@@ -93,7 +92,7 @@ func (ac *AirlineController) GetDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Update Document
-// @Description  Update Airline with specified ID
+// @Description  Update Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to upsert a document with specified ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `put`
 // @Tags         Airline collection
 // @Produce      json
 // @Param       id path string true "Airline ID like airline_10"
@@ -124,7 +123,7 @@ func (ac *AirlineController) UpdateDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Delete Document
-// @Description  Delete Airline with specified ID
+// @Description  Delete Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to delete a document with specified ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `delete`
 // @Tags         Airline collection
 // @Produce      json
 // @Param       id path string true "Airline ID like airline_10"
@@ -153,7 +152,7 @@ func (ac *AirlineController) DeleteDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Get Airlines by Country
-// @Description  Get list of Airlines. Optionally, you can filter the list by Country
+// @Description  Get list of Airlines. Optionally, you can filter the list by Country<br><br>This provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `get`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        country query string false "Filter by country<br>Example: France, United Kingdom, United States"
@@ -175,34 +174,44 @@ func (ac *AirlineController) GetAirlines() gin.HandlerFunc {
 			offset = 0
 		}
 		var query string
-		// Query to get a list of airlines filtered by country
+		var params map[string]interface{}
+
 		if country != "" {
-			query = fmt.Sprintf(`
-		SELECT airline.callsign,
-			airline.country,
-			airline.iata,
-			airline.icao,
-			airline.name
-		FROM airline as airline
-		WHERE airline.country='%s'
-		ORDER BY airline.name
-		LIMIT %d
-		OFFSET %d;
-	`, country, limit, offset)
+			query = `
+				SELECT airline.callsign,
+					airline.country,
+					airline.iata,
+					airline.icao,
+					airline.name
+				FROM airline AS airline
+				WHERE airline.country=$country
+				ORDER BY airline.name
+				LIMIT $limit
+				OFFSET $offset;
+			`
+			params = map[string]interface{}{
+				"country": country,
+				"limit":   limit,
+				"offset":  offset,
+			}
 		} else {
-			query = fmt.Sprintf(`
-			SELECT airline.callsign,
-				airline.country,
-				airline.iata,
-				airline.icao,
-				airline.name
-			FROM airline as airline
-			ORDER BY airline.name
-			LIMIT %d
-			OFFSET %d;
-		`, limit, offset)
+			query = `
+				SELECT airline.callsign,
+					airline.country,
+					airline.iata,
+					airline.icao,
+					airline.name
+				FROM airline AS airline
+				ORDER BY airline.name
+				LIMIT $limit
+				OFFSET $offset;
+			`
+			params = map[string]interface{}{
+				"limit":  limit,
+				"offset": offset,
+			}
 		}
-		queryResult, err := ac.AirlineService.QueryAirline(query)
+		queryResult, err := ac.AirlineService.QueryAirline(query, params)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),
@@ -221,7 +230,7 @@ func (ac *AirlineController) GetAirlines() gin.HandlerFunc {
 }
 
 // @Summary      Get Airlines Flying to Airport
-// @Description  Get Airlines flying to specified destination Airport
+// @Description  Get Airlines flying to specified destination Airport<br><br>This provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `post`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        airport query string true "Destination airport<br>Example : SFO, JFK, LAX"
@@ -244,25 +253,31 @@ func (ac *AirlineController) GetAirlinesToAirport() gin.HandlerFunc {
 		}
 
 		// Query for airlines flying to the airport
-		query := fmt.Sprintf(`
-            SELECT air.callsign,
-                air.country,
-                air.iata,
-                air.icao,
-                air.name
-            FROM (
-                SELECT DISTINCT META(airline).id AS airlineId
-                FROM route
-                JOIN airline ON route.airlineid = META(airline).id
-                WHERE route.destinationairport = "%s"
-            ) AS subquery
-            JOIN airline AS air ON META(air).id = subquery.airlineId
-            ORDER BY air.name
-            LIMIT %d
-            OFFSET %d;
-        `, airport, limit, offset)
+		query := `
+		SELECT air.callsign,
+			air.country,
+			air.iata,
+			air.icao,
+			air.name
+		FROM (
+			SELECT DISTINCT META(airline).id AS airlineId
+			FROM route
+			JOIN airline ON route.airlineid = META(airline).id
+			WHERE route.destinationairport = $airport
+		) AS subquery
+		JOIN airline AS air ON META(air).id = subquery.airlineId
+		ORDER BY air.name
+		LIMIT $limit
+		OFFSET $offset;
+	`
 
-		queryResult, err := ac.AirlineService.QueryAirline(query)
+		params := map[string]interface{}{
+			"airport": airport,
+			"limit":   limit,
+			"offset":  offset,
+		}
+
+		queryResult, err := ac.AirlineService.QueryAirline(query, params)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),

@@ -11,8 +11,8 @@ type IAirportService interface {
 	GetAirport(string) (*models.Airport, error)
 	UpdateAirport(string, *models.Airport) error
 	DeleteAirport(string) error
-	QueryAirport(string) ([]models.Airport, error)
-	QueryDirectConnectionAirport(string) ([]models.Destination, error)
+	QueryAirport(string, map[string]interface{}) ([]models.Airport, error)
+	QueryDirectConnectionAirport(string, map[string]interface{}) ([]models.Destination, error)
 }
 
 type AirportService struct {
@@ -66,8 +66,8 @@ func (s *AirportService) DeleteAirport(docKey string) error {
 	return nil
 }
 
-func (s *AirportService) QueryAirport(query string) ([]models.Airport, error) {
-	queryResult, err := s.scope.Query(query, nil)
+func (s *AirportService) QueryAirport(query string, params map[string]interface{}) ([]models.Airport, error) {
+	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +88,8 @@ func (s *AirportService) QueryAirport(query string) ([]models.Airport, error) {
 	return documents, nil
 }
 
-func (s *AirportService) QueryDirectConnectionAirport(query string) ([]models.Destination, error) {
-	queryResult, err := s.scope.Query(query, nil)
+func (s *AirportService) QueryDirectConnectionAirport(query string, params map[string]interface{}) ([]models.Destination, error) {
+	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
 	if err != nil {
 		return nil, err
 	}

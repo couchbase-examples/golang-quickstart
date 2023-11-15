@@ -11,7 +11,7 @@ type IAirlineService interface {
 	GetAirline(string) (*models.Airline, error)
 	UpdateAirline(string, *models.Airline) error
 	DeleteAirline(string) error
-	QueryAirline(string) ([]models.Airline, error)
+	QueryAirline(string, map[string]interface{}) ([]models.Airline, error)
 }
 
 type AirlineService struct {
@@ -64,8 +64,8 @@ func (s *AirlineService) DeleteAirline(docKey string) error {
 	return nil
 }
 
-func (s *AirlineService) QueryAirline(query string) ([]models.Airline, error) {
-	queryResult, err := s.scope.Query(query, nil)
+func (s *AirlineService) QueryAirline(query string, params map[string]interface{}) ([]models.Airline, error) {
+	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
 	if err != nil {
 		return nil, err
 	}

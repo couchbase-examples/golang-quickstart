@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/couchbase-examples/golang-quickstart/controllers"
 	_ "github.com/couchbase-examples/golang-quickstart/controllers"
 	"github.com/couchbase-examples/golang-quickstart/db"
 	_ "github.com/couchbase-examples/golang-quickstart/docs"
 	"github.com/couchbase-examples/golang-quickstart/routes"
 	services "github.com/couchbase-examples/golang-quickstart/service"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -54,6 +55,6 @@ func main() {
 
 	// Setup routes and pass the Controllers struct
 	routes.SetupCollectionRoutes(router, controllers)
-
+	fmt.Println("The application is running on http://127.0.0.1:8080 ")
 	router.Run(":8080")
 }

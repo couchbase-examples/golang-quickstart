@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,7 @@ func NewAirportController(AirportService services.IAirportService) *AirportContr
 }
 
 // @Summary      Insert Airport Document
-// @Description  Create Airport with specified ID
+// @Description  Create Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `post`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        id path string true "Airport ID like airport_1273"
@@ -64,7 +63,7 @@ func (ac *AirportController) InsertDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      Get Airport Document
-// @Description  Get Airport with specified ID
+// @Description  Get Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `get`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        id path string true "Airport ID like airport_1273"
@@ -93,7 +92,7 @@ func (ac *AirportController) GetDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      Update Airport Document
-// @Description  Update Airport with specified ID
+// @Description  Update Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `put`
 // @Tags         Airport collection
 // @Produce      json
 // @Param       id path string true "Airport ID like airport_1273"
@@ -124,7 +123,7 @@ func (ac *AirportController) UpdateDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      Deletes Airport Document
-// @Description  Delete Airport with specified ID
+// @Description  Delete Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `delete`
 // @Tags         Airport collection
 // @Produce      json
 // @Param 		 id  path string true  "Airport ID like airport_1273"
@@ -153,10 +152,10 @@ func (ac *AirportController) DeleteDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      List Airport Document
-// @Description  Get list of Airports. Optionally, you can filter the list by Country
+// @Description  Get list of Airports. Optionally, you can filter the list by Country<br><br>This provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method: `get`
 // @Tags         Airport collection
 // @Produce      json
-// @Param        country query string true "Country<br>Example: United Kingdom, France, United States"
+// @Param        country query string false "Country<br>Example: United Kingdom, France, United States"
 // @Param        limit query int false "Number of airports to return (page size)<br>Default value : 10"
 // @Param        offset query int false "Number of airports to skip (for pagination)<br>Default value : 0"
 // @Success      200 {object} []models.Airport
@@ -164,7 +163,7 @@ func (ac *AirportController) DeleteDocumentForAirport() gin.HandlerFunc {
 // @Router       /api/v1/airport/list [get]
 func (ac *AirportController) GetAirports() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		country := context.Query("country")
+		country := context.DefaultQuery("country", "")
 		limit, err := strconv.Atoi(context.DefaultQuery("limit", "10"))
 		if err != nil {
 			limit = 10
@@ -173,23 +172,50 @@ func (ac *AirportController) GetAirports() gin.HandlerFunc {
 		if err != nil {
 			offset = 0
 		}
+		var query string
+		var params map[string]interface{}
 
-		query := fmt.Sprintf(`
-            SELECT airport.airportname,
-                airport.city,
-                airport.country,
-                airport.faa,
-                airport.geo,
-                airport.icao,
-                airport.tz
-            FROM airport AS airport
-            WHERE airport.country="%s"
-            ORDER BY airport.airportname
-            LIMIT %d
-            OFFSET %d;
-        `, country, limit, offset)
+		if country != "" {
+			query = `
+				SELECT airport.airportname,
+					airport.city,
+					airport.country,
+					airport.faa,
+					airport.geo,
+					airport.icao,
+					airport.tz
+				FROM airport AS airport
+				WHERE airport.country=$country
+				ORDER BY airport.airportname
+				LIMIT $limit
+				OFFSET $offset;
+			`
+			params = map[string]interface{}{
+				"country": country,
+				"limit":   limit,
+				"offset":  offset,
+			}
+		} else {
+			query = `
+				SELECT airport.airportname,
+					airport.city,
+					airport.country,
+					airport.faa,
+					airport.geo,
+					airport.icao,
+					airport.tz
+				FROM airport AS airport
+				ORDER BY airport.airportname
+				LIMIT $limit
+				OFFSET $offset;
+			`
+			params = map[string]interface{}{
+				"limit":  limit,
+				"offset": offset,
+			}
+		}
 		// Use the common method to execute the query and return the results
-		queryResult, err := ac.AirportService.QueryAirport(query)
+		queryResult, err := ac.AirportService.QueryAirport(query, params)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),
@@ -206,7 +232,7 @@ func (ac *AirportController) GetAirports() gin.HandlerFunc {
 }
 
 // @Summary      Get Direct Connections from Airport
-// @Description  Get Direct Connections from specified Airport
+// @Description  Get Direct Connections from specified Airport<br><br>This provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method: `get`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        airport query string true "Source airport<br>Example: SFO, LHR, CDG"
@@ -227,18 +253,24 @@ func (ac *AirportController) GetDirectConnections() gin.HandlerFunc {
 			offset = 0
 		}
 
-		query := fmt.Sprintf(`
-            SELECT distinct (route.destinationairport)
-            FROM airport as airport
-            JOIN route as route on route.sourceairport = airport.faa
-            WHERE airport.faa="%s" and route.stops = 0
-            ORDER BY route.destinationairport
-            LIMIT %d
-            OFFSET %d
-        `, airport, limit, offset)
+		query := `
+		SELECT DISTINCT route.destinationairport
+		FROM airport AS airport
+		JOIN route AS route ON route.sourceairport = airport.faa
+		WHERE airport.faa = $airport AND route.stops = 0
+		ORDER BY route.destinationairport
+		LIMIT $limit
+		OFFSET $offset
+	`
+
+		params := map[string]interface{}{
+			"airport": airport,
+			"limit":   limit,
+			"offset":  offset,
+		}
 
 		// Use the common method to execute the query and return the results
-		queryResult, err := ac.AirportService.QueryDirectConnectionAirport(query)
+		queryResult, err := ac.AirportService.QueryDirectConnectionAirport(query, params)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),

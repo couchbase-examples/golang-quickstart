@@ -131,7 +131,9 @@ info:
 paths:
   /api/v1/airline/{id}:
     delete:
-      description: Delete Airline with specified ID
+      description: 'Delete Airline with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to delete a document with specified
+        ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `delete`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -151,7 +153,9 @@ paths:
       tags:
       - Airline collection
     get:
-      description: Get Airline with specified ID
+      description: 'Get Airline with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to get a document with specified
+        ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `get`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -173,7 +177,10 @@ paths:
       tags:
       - Airline collection
     post:
-      description: Create Airline with specified ID
+      description: 'Create Airline with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/airline_controller.go`<br><br>Method:
+        `post`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -203,7 +210,9 @@ paths:
       tags:
       - Airline collection
     put:
-      description: Update Airline with specified ID
+      description: 'Update Airline with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to upsert a document with specified
+        ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `put`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -232,7 +241,10 @@ paths:
       - Airline collection
   /api/v1/airline/list:
     get:
-      description: Get list of Airlines. Optionally, you can filter the list by Country
+      description: 'Get list of Airlines. Optionally, you can filter the list by Country<br><br>This
+        provides an example of using SQL++ query in Couchbase to fetch a list of documents
+        matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method:
+        `get`'
       parameters:
       - description: 'Filter by country<br>Example: France, United Kingdom, United
           States'
@@ -263,7 +275,10 @@ paths:
       - Airline collection
   /api/v1/airline/to-airport:
     get:
-      description: Get Airlines flying to specified destination Airport
+      description: 'Get Airlines flying to specified destination Airport<br><br>This
+        provides an example of using SQL++ query in Couchbase to fetch a list of documents
+        matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method:
+        `post`'
       parameters:
       - description: 'Destination airport<br>Example : SFO, JFK, LAX'
         in: query
@@ -296,7 +311,10 @@ paths:
       - Airline collection
   /api/v1/airport/{id}:
     delete:
-      description: Delete Airport with specified ID
+      description: 'Delete Airport with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `delete`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -316,7 +334,10 @@ paths:
       tags:
       - Airport collection
     get:
-      description: Get Airport with specified ID
+      description: 'Get Airport with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `get`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -338,7 +359,10 @@ paths:
       tags:
       - Airport collection
     post:
-      description: Create Airport with specified ID
+      description: 'Create Airport with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `post`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -368,7 +392,10 @@ paths:
       tags:
       - Airport collection
     put:
-      description: Update Airport with specified ID
+      description: 'Update Airport with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `put`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -397,7 +424,10 @@ paths:
       - Airport collection
   /api/v1/airport/direct-connections:
     get:
-      description: Get Direct Connections from specified Airport
+      description: 'Get Direct Connections from specified Airport<br><br>This provides
+        an example of using a SQL++ query in Couchbase to fetch a list of documents
+        matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `get`'
       parameters:
       - description: 'Source airport<br>Example: SFO, LHR, CDG'
         in: query
@@ -430,12 +460,14 @@ paths:
       - Airport collection
   /api/v1/airport/list:
     get:
-      description: Get list of Airports. Optionally, you can filter the list by Country
+      description: 'Get list of Airports. Optionally, you can filter the list by Country<br><br>This
+        provides an example of using a SQL++ query in Couchbase to fetch a list of
+        documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `get`'
       parameters:
       - description: 'Country<br>Example: United Kingdom, France, United States'
         in: query
         name: country
-        required: true
         type: string
       - description: 'Number of airports to return (page size)<br>Default value :
           10'
@@ -463,7 +495,10 @@ paths:
       - Airport collection
   /api/v1/route/{id}:
     delete:
-      description: Delete Route with specified ID
+      description: 'Delete Route with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method:
+        `delete`'
       parameters:
       - description: Route ID like route_10000
         in: path
@@ -483,7 +518,9 @@ paths:
       tags:
       - Route collection
     get:
-      description: Get Route with specified ID
+      description: 'Get Route with specified ID<br><br>This provides an example of
+        using Key Value operations in Couchbase to create a new document with a specified
+        ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `get`'
       parameters:
       - description: Route ID like route_10000
         in: path
@@ -505,7 +542,10 @@ paths:
       tags:
       - Route collection
     post:
-      description: Create Route with specified ID
+      description: 'Create Route with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method:
+        `post`'
       parameters:
       - description: Route ID like route_10000
         in: path
@@ -535,7 +575,10 @@ paths:
       tags:
       - Route collection
     put:
-      description: Update Route with specified ID
+      description: 'Update Route with specified ID<br><br>This provides an example
+        of using Key Value operations in Couchbase to create a new document with a
+        specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method:
+        `put`'
       parameters:
       - description: Route ID like route_10000
         in: path
