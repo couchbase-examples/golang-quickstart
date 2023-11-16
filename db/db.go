@@ -24,7 +24,7 @@ func InitializeCluster() *gocb.Cluster {
 	fmt.Println("Initializing Database")
 	_, fileName, _, ok := runtime.Caller(0)
 	if !ok {
-		fmt.Println("Error getting the project root path")
+		fmt.Println("Unable to get the project root path")
 	}
 
 	// Construct the absolute path to the .env file
@@ -32,7 +32,7 @@ func InitializeCluster() *gocb.Cluster {
 	envFilePath := filepath.Join(projectRoot, ".env")
 	// Load environment variables from a .env file
 	if err := godotenv.Load(envFilePath); err != nil {
-		fmt.Println("Error loading .env file")
+		fmt.Println("Unable to load .env file")
 	}
 
 	// Retrieve environment variables
