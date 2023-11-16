@@ -8,9 +8,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
-      USERNAME: ${{ secrets.USERNAME }}
-      PASSWORD: ${{ secrets.PASSWORD }}
+      DB_CONN_STR: ${{ secrets.DB_CONN_STR }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Go

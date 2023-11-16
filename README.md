@@ -40,9 +40,9 @@ Specifically, you need to do the following:
 - [Allow access](https://docs.couchbase.com/cloud/clusters/allow-ip-address.html) to the Cluster from the IP on which the application is running.
 
 ```sh
-CONNECTION_STRING=<connection_string>
-USERNAME=<user_with_read_write_permission_to_travel-sample_bucket>
-PASSWORD=<password_for_user>
+DB_CONN_STR=<connection_string>
+DB_USERNAME=<user_with_read_write_permission_to_travel-sample_bucket>
+DB_PASSWORD=<password_for_user>
 ```
 
 > Note: The connection string expects the `couchbases://` or `couchbase://` part.

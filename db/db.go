@@ -12,9 +12,9 @@ import (
 
 // Define constants for environment variable keys
 const (
-	ConnectionString = "CONNECTION_STRING"
-	UsernameKey      = "USERNAME"
-	PasswordKey      = "PASSWORD"
+	ConnectionString = "DB_CONN_STR"
+	UsernameKey      = "DB_USERNAME"
+	PasswordKey      = "DB_PASSWORD"
 	BucketName       = "travel-sample"
 	ScopeName        = "inventory"
 )
@@ -79,7 +79,7 @@ func GetScope(cluster *gocb.Cluster) *gocb.Scope {
 // Helper function to retrieve an environment variable
 func getEnvVar(key string) string {
 	value := os.Getenv(key)
-	if value == "" && (key == "USERNAME" || key == "PASSWORD" || key == "CONNECTION_STRING") {
+	if value == "" && (key == "DB_USERNAME" || key == "DB_PASSWORD" || key == "DB_CONN_STR") {
 		fmt.Printf("Environment variable %s is empty.\n", key)
 		os.Exit(1)
 	}
