@@ -3,6 +3,8 @@ package db
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/couchbase/gocb/v2"
 	"github.com/joho/godotenv"
@@ -20,9 +22,16 @@ const (
 // InitializeCluster initializes the Couchbase cluster and returns it.
 func InitializeCluster() *gocb.Cluster {
 	fmt.Println("Initializing Database")
+	_, fileName, _, ok := runtime.Caller(0)
+	if !ok {
+		fmt.Println("Error getting the project root path")
+	}
 
+	// Construct the absolute path to the .env file
+	projectRoot := filepath.Dir(filepath.Dir(fileName))
+	envFilePath := filepath.Join(projectRoot, ".env")
 	// Load environment variables from a .env file
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(envFilePath); err != nil {
 		fmt.Println("Error loading .env file")
 	}
 

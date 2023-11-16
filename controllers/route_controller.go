@@ -23,7 +23,7 @@ func NewRouteController(routeService services.IRouteService) *RouteController {
 }
 
 // @Summary      Insert Route Document
-// @Description  Create Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `post`
+// @Description  Create Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `InsertDocumentForRoute`
 // @Tags         Route collection
 // @Produce      json
 // @Param        id path string true "Route ID like route_10000"
@@ -62,7 +62,7 @@ func (ac *RouteController) InsertDocumentForRoute() gin.HandlerFunc {
 }
 
 // @Summary      Get Route Document
-// @Description  Get Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `get`
+// @Description  Get Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `GetDocumentForRoute`
 // @Tags         Route collection
 // @Produce      json
 // @Param        id path string true "Route ID like route_10000"
@@ -91,7 +91,7 @@ func (ac *RouteController) GetDocumentForRoute() gin.HandlerFunc {
 }
 
 // @Summary      Update Route Document
-// @Description  Update Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `put`
+// @Description  Update Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `UpdateDocumentForRoute`
 // @Tags         Route collection
 // @Produce      json
 // @Param        id path string true "Route ID like route_10000"
@@ -122,7 +122,7 @@ func (ac *RouteController) UpdateDocumentForRoute() gin.HandlerFunc {
 }
 
 // @Summary      Delete Route Document
-// @Description  Delete Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `delete`
+// @Description  Delete Route with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `DeleteDocumentForRoute`
 // @Tags         Route collection
 // @Produce      json
 // @Param        id path string true "Route ID like route_10000"

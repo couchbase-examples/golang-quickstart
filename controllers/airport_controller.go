@@ -24,7 +24,7 @@ func NewAirportController(AirportService services.IAirportService) *AirportContr
 }
 
 // @Summary      Insert Airport Document
-// @Description  Create Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `post`
+// @Description  Create Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `InsertDocumentForAirport`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        id path string true "Airport ID like airport_1273"
@@ -63,7 +63,7 @@ func (ac *AirportController) InsertDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      Get Airport Document
-// @Description  Get Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `get`
+// @Description  Get Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `GetDocumentForAirport`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        id path string true "Airport ID like airport_1273"
@@ -92,7 +92,7 @@ func (ac *AirportController) GetDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      Update Airport Document
-// @Description  Update Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `put`
+// @Description  Update Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `UpdateDocumentForAirport`
 // @Tags         Airport collection
 // @Produce      json
 // @Param       id path string true "Airport ID like airport_1273"
@@ -123,7 +123,7 @@ func (ac *AirportController) UpdateDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      Deletes Airport Document
-// @Description  Delete Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `delete`
+// @Description  Delete Airport with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method: `DeleteDocumentForAirport`
 // @Tags         Airport collection
 // @Produce      json
 // @Param 		 id  path string true  "Airport ID like airport_1273"
@@ -152,7 +152,7 @@ func (ac *AirportController) DeleteDocumentForAirport() gin.HandlerFunc {
 }
 
 // @Summary      List Airport Document
-// @Description  Get list of Airports. Optionally, you can filter the list by Country<br><br>This provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method: `get`
+// @Description  Get list of Airports. Optionally, you can filter the list by Country<br><br>This provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method: `GetAirports`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        country query string false "Country<br>Example: United Kingdom, France, United States"
@@ -232,7 +232,7 @@ func (ac *AirportController) GetAirports() gin.HandlerFunc {
 }
 
 // @Summary      Get Direct Connections from Airport
-// @Description  Get Direct Connections from specified Airport<br><br>This provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method: `get`
+// @Description  Get Direct Connections from specified Airport<br><br>This provides an example of using a SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method: `GetDirectConnections`
 // @Tags         Airport collection
 // @Produce      json
 // @Param        airport query string true "Source airport<br>Example: SFO, LHR, CDG"

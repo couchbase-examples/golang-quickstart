@@ -46,23 +46,12 @@ func TestAddairline(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusCreated, resp.StatusCode)
 	}
 
-	// Fetch the document to validate it was stored correctly
-	getResp, err := http.Get(url)
+	retrievedData, err := airlineService.GetAirline(documentID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer getResp.Body.Close()
-
-	// Deserialize the response JSON
-	var retrievedData models.Airline
-	decoder := json.NewDecoder(getResp.Body)
-	err = decoder.Decode(&retrievedData)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	// Validate the retrieved document
-	assert.Equal(t, airlineData, retrievedData)
+	assert.Equal(t, &airlineData, retrievedData)
 
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
@@ -181,18 +170,11 @@ func TestReadAirline(t *testing.T) {
 		Country:  "Sample Country",
 	}
 
-	requestData, err := json.Marshal(airlineData)
+	// Create the airline
+	err := airlineService.CreateAirline(documentID, &airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	// Create the airline (HTTP POST request)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
-
 	// Fetch the airline (HTTP GET request)
 	getResp, err := http.Get(url)
 	if err != nil {
@@ -263,17 +245,11 @@ func TestUpdateAirline(t *testing.T) {
 		Country:  "Sample Country",
 	}
 
-	requestData, err := json.Marshal(airlineData)
+	// Create the airline
+	err := airlineService.CreateAirline(documentID, &airlineData)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	// Create the airline (HTTP POST request)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
 
 	// Update the airline (HTTP PUT request)
 	updatedAirlineData := models.Airline{
@@ -307,7 +283,7 @@ func TestUpdateAirline(t *testing.T) {
 	}
 
 	// Fetch the updated airline (HTTP GET request)
-	resp, err = http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -319,12 +295,11 @@ func TestUpdateAirline(t *testing.T) {
 	}
 
 	// Validate the retrieved data
-	var retrievedData models.Airline
-	err = json.NewDecoder(resp.Body).Decode(&retrievedData)
+	retrievedData, err := airlineService.GetAirline(documentID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, updatedAirlineData, retrievedData)
+	assert.Equal(t, &updatedAirlineData, retrievedData)
 
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
@@ -380,22 +355,10 @@ func TestDeletAirline(t *testing.T) {
 	}
 	documentID := "airline_test_delete"
 
-	// Create the document (HTTP POST request)
-	url := collectionBaseForAirline + "/api/v1/airline/" + documentID
-	requestData, err := json.Marshal(airlineData)
+	// Create the airline
+	err := airlineService.CreateAirline(documentID, &airlineData)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	postResp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer postResp.Body.Close()
-
-	// Ensure that the POST request was successful (HTTP status 201)
-	if postResp.StatusCode != http.StatusCreated {
-		t.Fatalf("Expected status code %d, got %d", http.StatusCreated, postResp.StatusCode)
 	}
 
 	// Delete the created document (HTTP DELETE request)

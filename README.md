@@ -34,6 +34,11 @@ Create a copy of .env.example & rename it to .env & add the values for the Couch
 
 To know more about connecting to your Capella cluster, please follow the [instructions](https://docs.couchbase.com/cloud/get-started/connect.html).
 
+Specifically, you need to do the following:
+
+- Create the [database credentials](https://docs.couchbase.com/cloud/clusters/manage-database-users.html) to access the travel-sample bucket (Read and Write) used in the application.
+- [Allow access](https://docs.couchbase.com/cloud/clusters/allow-ip-address.html) to the Cluster from the IP on which the application is running.
+
 ```sh
 CONNECTION_STRING=<connection_string>
 USERNAME=<user_with_read_write_permission_to_travel-sample_bucket>
@@ -51,6 +56,7 @@ At this point, we have installed the dependencies, loaded the travel-sample data
 The application will run on port 8080 of your local machine (http://localhost:8080). You will find the Swagger documentation of the API.
 
 ```sh
+# Execute this command in the project's root directory
 go run .
 ```
 
@@ -70,7 +76,17 @@ docker build -t couchbase-gin-gonic-quickstart .
 docker run -it --env-file .env -p 8080:8080 couchbase-gin-gonic-quickstart
 ```
 
-> Note: The `.env` file has the connection information to connect to your Capella cluster. The application can now be reached on port 8080 of your local machine.
+> Note: The `.env` file has the connection information to connect to your Capella cluster. These will be part of the environment variables in the Docker container.
+
+### Checking the Application
+
+Once the application starts, you can see the details of the application on the terminal.
+
+![Application Startup](app_startup.png)
+
+The application will run on port 8080 of your local machine (http://localhost:8080). You will find the Swagger documentation of the API if you go to the URL in your browser.
+
+![Swagger Documentation](swagger_documentation.png)
 
 ## Running The Tests
 
@@ -90,7 +106,7 @@ For this quickstart, we use three collections, `airport`, `airline` and `routes`
 
 ## Appendix: Running Self Managed Couchbase Cluster
 
-If you are running this quickstart with a self managed Couchbase cluster, you need to [load](https://docs.couchbase.com/server/current/manage/manage-settings/install-sample-buckets.html) the travel-sample data bucket in your cluster and generate the credentials for the bucket by [creating a user](https://docs.couchbase.com/server/current/manage/manage-security/manage-users-and-roles.html#add-a-user)
+If you are running this quickstart with a self managed Couchbase cluster, you need to [load](https://docs.couchbase.com/server/current/manage/manage-settings/install-sample-buckets.html) the travel-sample data bucket in your cluster and generate the credentials for the bucket by [creating a user](https://docs.couchbase.com/server/current/manage/manage-security/manage-users-and-roles.html#add-a-user).
 
 You need to update the connection string and the credentials in the `.env` file in the source folder.
 

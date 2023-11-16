@@ -46,23 +46,13 @@ func TestAddRoute(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusCreated, resp.StatusCode)
 	}
 
-	// Fetch the document to validate it was stored correctly
-	getResp, err := http.Get(url)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer getResp.Body.Close()
-
-	// Deserialize the response JSON
-	var retrievedData models.Route
-	decoder := json.NewDecoder(getResp.Body)
-	err = decoder.Decode(&retrievedData)
+	retrievedData, err := routeService.GetRoute(documentID)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Validate the retrieved document
-	assert.Equal(t, routeData, retrievedData)
+	assert.Equal(t, &routeData, retrievedData)
 
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
@@ -186,19 +176,11 @@ func TestReadRoute(t *testing.T) {
 		Distance:           4151.79,
 	}
 
-	// Convert the data to JSON
-	requestData, err := json.Marshal(routeData)
+	// Create the route
+	err := routeService.CreateRoute(documentID, &routeData)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	// Create the route (HTTP POST request)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
-
 	// Fetch the route (HTTP GET request)
 	getResp, err := http.Get(url)
 	if err != nil {
@@ -269,17 +251,8 @@ func TestUpdateRoute(t *testing.T) {
 		Distance:           4151.79,
 	}
 
-	requestData, err := json.Marshal(routeData)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Create the route (HTTP POST request)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
+	// Create the airline
+	err := routeService.CreateRoute(documentID, &routeData)
 
 	// Update the route (HTTP PUT request)
 	updatedRouteData := models.Route{
@@ -315,7 +288,7 @@ func TestUpdateRoute(t *testing.T) {
 	}
 
 	// Fetch the updated route (HTTP GET request)
-	resp, err = http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -327,12 +300,11 @@ func TestUpdateRoute(t *testing.T) {
 	}
 
 	// Validate the retrieved data
-	var retrievedData models.Route
-	err = json.NewDecoder(resp.Body).Decode(&retrievedData)
+	retrievedData, err := routeService.GetRoute(documentID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, updatedRouteData, retrievedData)
+	assert.Equal(t, &updatedRouteData, retrievedData)
 
 	// Clean up (delete the document)
 	deleteReq, err := http.NewRequest("DELETE", url, nil)
@@ -396,24 +368,11 @@ func TestDeleteRoute(t *testing.T) {
 	}
 	documentID := "route_test_delete"
 
-	// Create the document (HTTP POST request)
-	url := collectionBaseForRoute + "/api/v1/route/" + documentID
-	requestData, err := json.Marshal(routeData)
+	// Create the airline
+	err := routeService.CreateRoute(documentID, &routeData)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	postResp, err := http.Post(url, "application/json", bytes.NewBuffer(requestData))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer postResp.Body.Close()
-
-	// Ensure that the POST request was successful (HTTP status 201)
-	if postResp.StatusCode != http.StatusCreated {
-		t.Fatalf("Expected status code %d, got %d", http.StatusCreated, postResp.StatusCode)
-	}
-
 	// Delete the created document (HTTP DELETE request)
 	deleteURL := collectionBaseForRoute + "/api/v1/route/" + documentID
 	req, err := http.NewRequest("DELETE", deleteURL, nil)
