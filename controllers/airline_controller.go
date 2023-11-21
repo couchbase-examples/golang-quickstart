@@ -24,7 +24,7 @@ func NewAirlineController(airlineService services.IAirlineService) *AirlineContr
 }
 
 // @Summary      Insert Document
-// @Description  Create Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airline_controller.go`<br><br>Method: `InsertDocumentForAirline`
+// @Description  Create Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `InsertDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        id path string true "Airline ID like airline_10"
@@ -63,7 +63,7 @@ func (ac *AirlineController) InsertDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Get Airline Document
-// @Description  Get Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to get a document with specified ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetDocumentForAirline`
+// @Description  Get Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to get a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        id path string true "Airline ID like airline_10"
@@ -92,7 +92,7 @@ func (ac *AirlineController) GetDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Update Document
-// @Description  Update Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to upsert a document with specified ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `UpdateDocumentForAirline`
+// @Description  Update Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to upsert a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `UpdateDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param       id path string true "Airline ID like airline_10"
@@ -123,7 +123,7 @@ func (ac *AirlineController) UpdateDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Delete Document
-// @Description  Delete Airline with specified ID<br><br>This provides an example of using Key Value operations in Couchbase to delete a document with specified ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `DeleteDocumentForAirline`
+// @Description  Delete Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to delete a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `DeleteDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param       id path string true "Airline ID like airline_10"
@@ -152,7 +152,7 @@ func (ac *AirlineController) DeleteDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Get Airlines by Country
-// @Description  Get list of Airlines. Optionally, you can filter the list by Country<br><br>This provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetAirlines`
+// @Description  Get list of Airlines. Optionally, you can filter the list by Country<br><br>This provides an example of using [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetAirlines`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        country query string false "Filter by country<br>Example: France, United Kingdom, United States"

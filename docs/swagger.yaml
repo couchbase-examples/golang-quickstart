@@ -132,8 +132,10 @@ paths:
   /api/v1/airline/{id}:
     delete:
       description: 'Delete Airline with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to delete a document with specified
-        ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `delete`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to delete a document with specified ID.<br><br>Key Value operations
+        are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code:
+        `controller/airline_controller.go`<br><br>Method: `DeleteDocumentForAirline`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -154,8 +156,10 @@ paths:
       - Airline collection
     get:
       description: 'Get Airline with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to get a document with specified
-        ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `get`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to get a document with specified ID.<br><br>Key Value operations
+        are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code:
+        `controller/airline_controller.go`<br><br>Method: `GetDocumentForAirline`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -178,9 +182,11 @@ paths:
       - Airline collection
     post:
       description: 'Create Airline with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/airline_controller.go`<br><br>Method:
-        `post`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations<br><br>Code: `controller/airline_controller.go`<br><br>Method:
+        `InsertDocumentForAirline`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -211,8 +217,10 @@ paths:
       - Airline collection
     put:
       description: 'Update Airline with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to upsert a document with specified
-        ID.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `put`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to upsert a document with specified ID.<br><br>Key Value operations
+        are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code:
+        `controller/airline_controller.go`<br><br>Method: `UpdateDocumentForAirline`'
       parameters:
       - description: Airline ID like airline_10
         in: path
@@ -242,9 +250,9 @@ paths:
   /api/v1/airline/list:
     get:
       description: 'Get list of Airlines. Optionally, you can filter the list by Country<br><br>This
-        provides an example of using SQL++ query in Couchbase to fetch a list of documents
-        matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method:
-        `get`'
+        provides an example of using [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html)
+        in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code:
+        `controller/airline_controller.go`<br><br>Method: `GetAirlines`'
       parameters:
       - description: 'Filter by country<br>Example: France, United Kingdom, United
           States'
@@ -278,7 +286,7 @@ paths:
       description: 'Get Airlines flying to specified destination Airport<br><br>This
         provides an example of using SQL++ query in Couchbase to fetch a list of documents
         matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method:
-        `post`'
+        `GetAirlinesToAirport`'
       parameters:
       - description: 'Destination airport<br>Example : SFO, JFK, LAX'
         in: query
@@ -312,9 +320,11 @@ paths:
   /api/v1/airport/{id}:
     delete:
       description: 'Delete Airport with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
-        `delete`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `DeleteDocumentForAirport`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -335,9 +345,9 @@ paths:
       - Airport collection
     get:
       description: 'Get Airport with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
-        `get`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `GetDocumentForAirport`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -360,9 +370,12 @@ paths:
       - Airport collection
     post:
       description: 'Create Airport with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
-        `post`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Key Value operations are unique to Couchbase and provide
+        very high speed get/set/delete operations<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `InsertDocumentForAirport`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -393,9 +406,11 @@ paths:
       - Airport collection
     put:
       description: 'Update Airport with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/airport_controller.go`<br><br>Method:
-        `put`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Code: `controller/airport_controller.go`<br><br>Method:
+        `UpdateDocumentForAirport`'
       parameters:
       - description: Airport ID like airport_1273
         in: path
@@ -425,9 +440,9 @@ paths:
   /api/v1/airport/direct-connections:
     get:
       description: 'Get Direct Connections from specified Airport<br><br>This provides
-        an example of using a SQL++ query in Couchbase to fetch a list of documents
-        matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method:
-        `get`'
+        an example of using a [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html)
+        in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code:
+        `controller/airport_controller.go`<br><br>Method: `GetDirectConnections`'
       parameters:
       - description: 'Source airport<br>Example: SFO, LHR, CDG'
         in: query
@@ -461,9 +476,9 @@ paths:
   /api/v1/airport/list:
     get:
       description: 'Get list of Airports. Optionally, you can filter the list by Country<br><br>This
-        provides an example of using a SQL++ query in Couchbase to fetch a list of
-        documents matching the specified criteria.<br><br>Code: `controller/airport_controller.go`<br><br>Method:
-        `get`'
+        provides an example of using a [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html)
+        in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code:
+        `controller/airport_controller.go`<br><br>Method: `GetAirports`'
       parameters:
       - description: 'Country<br>Example: United Kingdom, France, United States'
         in: query
@@ -496,9 +511,10 @@ paths:
   /api/v1/route/{id}:
     delete:
       description: 'Delete Route with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method:
-        `delete`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Code: `controller/route_controller.go`<br><br>Method: `DeleteDocumentForRoute`'
       parameters:
       - description: Route ID like route_10000
         in: path
@@ -519,8 +535,10 @@ paths:
       - Route collection
     get:
       description: 'Get Route with specified ID<br><br>This provides an example of
-        using Key Value operations in Couchbase to create a new document with a specified
-        ID<br><br>Code: `controller/route_controller.go`<br><br>Method: `get`'
+        using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Code: `controller/route_controller.go`<br><br>Method: `GetDocumentForRoute`'
       parameters:
       - description: Route ID like route_10000
         in: path
@@ -543,9 +561,10 @@ paths:
       - Route collection
     post:
       description: 'Create Route with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method:
-        `post`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Code: `controller/route_controller.go`<br><br>Method: `InsertDocumentForRoute`'
       parameters:
       - description: Route ID like route_10000
         in: path
@@ -576,9 +595,10 @@ paths:
       - Route collection
     put:
       description: 'Update Route with specified ID<br><br>This provides an example
-        of using Key Value operations in Couchbase to create a new document with a
-        specified ID<br><br>Code: `controller/route_controller.go`<br><br>Method:
-        `put`'
+        of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html)
+        in Couchbase to create a new document with a specified ID.<br><br>Key Value
+        operations are unique to Couchbase and provide very high speed get/set/delete
+        operations.<br><br>Code: `controller/route_controller.go`<br><br>Method: `UpdateDocumentForRoute`'
       parameters:
       - description: Route ID like route_10000
         in: path
