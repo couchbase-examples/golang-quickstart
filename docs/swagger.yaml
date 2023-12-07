@@ -72,7 +72,7 @@ definitions:
       airline:
         example: AF
         type: string
-      airline_id:
+      airlineid:
         example: airline_10
         type: string
       destinationairport:
@@ -96,7 +96,7 @@ definitions:
         type: integer
     required:
     - airline
-    - airline_id
+    - airlineid
     - destinationairport
     - sourceairport
     type: object

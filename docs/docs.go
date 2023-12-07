@@ -758,7 +758,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "airline",
-                "airline_id",
+                "airlineid",
                 "destinationairport",
                 "sourceairport"
             ],
@@ -767,7 +767,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "AF"
                 },
-                "airline_id": {
+                "airlineid": {
                     "type": "string",
                     "example": "airline_10"
                 },

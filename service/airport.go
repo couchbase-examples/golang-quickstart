@@ -11,8 +11,8 @@ type IAirportService interface {
 	GetAirport(string) (*models.Airport, error)
 	UpdateAirport(string, *models.Airport) error
 	DeleteAirport(string) error
-	QueryAirport(string, map[string]interface{}) ([]models.Airport, error)
-	QueryDirectConnectionAirport(string, map[string]interface{}) ([]models.Destination, error)
+	ListAirport(string, int, int) ([]models.Airport, error)
+	ListDirectConnection(string, int, int) ([]models.Destination, error)
 }
 
 type AirportService struct {
@@ -66,7 +66,49 @@ func (s *AirportService) DeleteAirport(docKey string) error {
 	return nil
 }
 
-func (s *AirportService) QueryAirport(query string, params map[string]interface{}) ([]models.Airport, error) {
+func (s *AirportService) ListAirport(country string, limit, offset int) ([]models.Airport, error) {
+	var query string
+	var params map[string]interface{}
+
+	if country != "" {
+		query = `
+			SELECT airport.airportname,
+				airport.city,
+				airport.country,
+				airport.faa,
+				airport.geo,
+				airport.icao,
+				airport.tz
+			FROM airport AS airport
+			WHERE airport.country=$country
+			ORDER BY airport.airportname
+			LIMIT $limit
+			OFFSET $offset;
+		`
+		params = map[string]interface{}{
+			"country": country,
+			"limit":   limit,
+			"offset":  offset,
+		}
+	} else {
+		query = `
+			SELECT airport.airportname,
+				airport.city,
+				airport.country,
+				airport.faa,
+				airport.geo,
+				airport.icao,
+				airport.tz
+			FROM airport AS airport
+			ORDER BY airport.airportname
+			LIMIT $limit
+			OFFSET $offset;
+		`
+		params = map[string]interface{}{
+			"limit":  limit,
+			"offset": offset,
+		}
+	}
 	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
 	if err != nil {
 		return nil, err
@@ -88,7 +130,22 @@ func (s *AirportService) QueryAirport(query string, params map[string]interface{
 	return documents, nil
 }
 
-func (s *AirportService) QueryDirectConnectionAirport(query string, params map[string]interface{}) ([]models.Destination, error) {
+func (s *AirportService) ListDirectConnection(airport string, limit, offset int) ([]models.Destination, error) {
+	query := `
+	SELECT DISTINCT route.destinationairport
+	FROM airport AS airport
+	JOIN route AS route ON route.sourceairport = airport.faa
+	WHERE airport.faa = $airport AND route.stops = 0
+	ORDER BY route.destinationairport
+	LIMIT $limit
+	OFFSET $offset
+`
+
+	params := map[string]interface{}{
+		"airport": airport,
+		"limit":   limit,
+		"offset":  offset,
+	}
 	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
 	if err != nil {
 		return nil, err

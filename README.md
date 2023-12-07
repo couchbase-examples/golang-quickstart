@@ -110,7 +110,7 @@ Swagger documents the structure of request and response bodies using models. The
 To run the standard tests, use the following commands:
 
 ```sh
-# Run standard unit tests for the project
+# Run standard tests for the project
 cd test
 go test -v
 ```

@@ -6,7 +6,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: "0 11 * * *"
+    - cron: "0 12 * * *"
 
 jobs:
   test:
@@ -17,11 +17,10 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Go
-        run: |
-          sudo apt -y update
-          sudo apt -y install golang
-          export PATH=$PATH:/usr/local/go/bin
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.21.4'
       - name: Setup golang app
         run: |
           go run . &

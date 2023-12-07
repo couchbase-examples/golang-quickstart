@@ -24,7 +24,7 @@ func NewAirlineController(airlineService services.IAirlineService) *AirlineContr
 }
 
 // @Summary      Insert Document
-// @Description  Create Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `InsertDocumentForAirline`
+// @Description  Create Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controllers/airline_controller.go`<br><br>Method: `InsertDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        id path string true "Airline ID like airline_10"
@@ -63,7 +63,7 @@ func (ac *AirlineController) InsertDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Get Airline Document
-// @Description  Get Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to get a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetDocumentForAirline`
+// @Description  Get Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to get a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controllers/airline_controller.go`<br><br>Method: `GetDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        id path string true "Airline ID like airline_10"
@@ -92,7 +92,7 @@ func (ac *AirlineController) GetDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Update Document
-// @Description  Update Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to upsert a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `UpdateDocumentForAirline`
+// @Description  Update Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to upsert a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controllers/airline_controller.go`<br><br>Method: `UpdateDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param       id path string true "Airline ID like airline_10"
@@ -123,7 +123,7 @@ func (ac *AirlineController) UpdateDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Delete Document
-// @Description  Delete Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to delete a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controller/airline_controller.go`<br><br>Method: `DeleteDocumentForAirline`
+// @Description  Delete Airline with specified ID<br><br>This provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to delete a document with specified ID.<br><br>Key Value operations are unique to Couchbase and provide very high speed get/set/delete operations<br><br>Code: `controllers/airline_controller.go`<br><br>Method: `DeleteDocumentForAirline`
 // @Tags         Airline collection
 // @Produce      json
 // @Param       id path string true "Airline ID like airline_10"
@@ -152,7 +152,7 @@ func (ac *AirlineController) DeleteDocumentForAirline() gin.HandlerFunc {
 }
 
 // @Summary      Get Airlines by Country
-// @Description  Get list of Airlines. Optionally, you can filter the list by Country<br><br>This provides an example of using [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetAirlines`
+// @Description  Get list of Airlines. Optionally, you can filter the list by Country<br><br>This provides an example of using [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controllers/airline_controller.go`<br><br>Method: `GetAirlines`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        country query string false "Filter by country<br>Example: France, United Kingdom, United States"
@@ -173,45 +173,7 @@ func (ac *AirlineController) GetAirlines() gin.HandlerFunc {
 		if err != nil {
 			offset = 0
 		}
-		var query string
-		var params map[string]interface{}
-
-		if country != "" {
-			query = `
-				SELECT airline.callsign,
-					airline.country,
-					airline.iata,
-					airline.icao,
-					airline.name
-				FROM airline AS airline
-				WHERE airline.country=$country
-				ORDER BY airline.name
-				LIMIT $limit
-				OFFSET $offset;
-			`
-			params = map[string]interface{}{
-				"country": country,
-				"limit":   limit,
-				"offset":  offset,
-			}
-		} else {
-			query = `
-				SELECT airline.callsign,
-					airline.country,
-					airline.iata,
-					airline.icao,
-					airline.name
-				FROM airline AS airline
-				ORDER BY airline.name
-				LIMIT $limit
-				OFFSET $offset;
-			`
-			params = map[string]interface{}{
-				"limit":  limit,
-				"offset": offset,
-			}
-		}
-		queryResult, err := ac.AirlineService.QueryAirline(query, params)
+		queryResult, err := ac.AirlineService.ListAirlines(country, limit, offset)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),
@@ -230,7 +192,7 @@ func (ac *AirlineController) GetAirlines() gin.HandlerFunc {
 }
 
 // @Summary      Get Airlines Flying to Airport
-// @Description  Get Airlines flying to specified destination Airport<br><br>This provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controller/airline_controller.go`<br><br>Method: `GetAirlinesToAirport`
+// @Description  Get Airlines flying to specified destination Airport<br><br>This provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.<br><br>Code: `controllers/airline_controller.go`<br><br>Method: `GetAirlinesToAirport`
 // @Tags         Airline collection
 // @Produce      json
 // @Param        airport query string true "Destination airport<br>Example : SFO, JFK, LAX"
@@ -252,32 +214,7 @@ func (ac *AirlineController) GetAirlinesToAirport() gin.HandlerFunc {
 			offset = 0
 		}
 
-		// Query for airlines flying to the airport
-		query := `
-		SELECT air.callsign,
-			air.country,
-			air.iata,
-			air.icao,
-			air.name
-		FROM (
-			SELECT DISTINCT META(airline).id AS airlineId
-			FROM route
-			JOIN airline ON route.airlineid = META(airline).id
-			WHERE route.destinationairport = $airport
-		) AS subquery
-		JOIN airline AS air ON META(air).id = subquery.airlineId
-		ORDER BY air.name
-		LIMIT $limit
-		OFFSET $offset;
-	`
-
-		params := map[string]interface{}{
-			"airport": airport,
-			"limit":   limit,
-			"offset":  offset,
-		}
-
-		queryResult, err := ac.AirlineService.QueryAirline(query, params)
+		queryResult, err := ac.AirlineService.ListAirlinesToAirport(airport, limit, offset)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),
