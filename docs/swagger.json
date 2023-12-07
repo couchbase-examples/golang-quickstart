@@ -1,0 +1,811 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "\nThis API provides operations for multiple collections in the database, including CRUD operations and query examples.\nWe have a visual representation of the API documentation using Swagger, which allows you to interact with the API's endpoints directly through the browser. It provides a clear view of the API, including endpoints, HTTP methods, request parameters, and response objects.\nClick on an individual endpoint to expand it and see detailed information. This includes the endpoint's description, possible response status codes, and the request parameters it accepts.\nTrying Out the API\nYou can try out an API by clicking on the \"Try it out\" button next to the endpoints.\n- Parameters: If an endpoint requires parameters, Swagger UI provides input boxes for you to fill in. This could include path parameters, query strings, headers, or the body of a POST/PUT request.\n- Execution: Once you've inputted all the necessary parameters, you can click the \"Execute\" button to make a live API call. Swagger UI will send the request to the API and display the response directly in the documentation. This includes the response code, response headers, and response body.\nModels\n\u003cdiv style=\"float: left;\"\u003eSwagger documents the structure of request and response bodies using models. These models define the expected data structure using JSON schema and are extremely helpful in understanding what data to send and expect.\nFor details on the API, please check the tutorial on the Couchbase Developer Portal: https://developer.couchbase.com/tutorial-quickstart-golang-gin-gonic",
+        "title": "Golang Quickstart using Gin Gonic",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/airline/list": {
+            "get": {
+                "description": "Get list of Airlines. Optionally, you can filter the list by Country\u003cbr\u003e\u003cbr\u003eThis provides an example of using [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: `controller/airline_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetAirlines`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Get Airlines by Country",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by country\u003cbr\u003eExample: France, United Kingdom, United States",
+                        "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to return (page size).\u003cbr\u003eExample: 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to skip (for pagination).\u003cbr\u003eExample: 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Airline"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airline/to-airport": {
+            "get": {
+                "description": "Get Airlines flying to specified destination Airport\u003cbr\u003e\u003cbr\u003eThis provides an example of using SQL++ query in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: `controller/airline_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetAirlinesToAirport`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Get Airlines Flying to Airport",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Destination airport\u003cbr\u003eExample : SFO, JFK, LAX",
+                        "name": "airport",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to return (page size)\u003cbr\u003eDefault value : 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airlines to skip (for pagination)\u003cbr\u003eDefault value : 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Airline"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airline/{id}": {
+            "get": {
+                "description": "Get Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to get a document with specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations\u003cbr\u003e\u003cbr\u003eCode: `controller/airline_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetDocumentForAirline`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Get Airline Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airline ID like airline_10",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Airline"
+                        }
+                    },
+                    "404": {
+                        "description": "Airline Document ID not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to upsert a document with specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations\u003cbr\u003e\u003cbr\u003eCode: `controller/airline_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `UpdateDocumentForAirline`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Update Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airline ID like airline_10",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updates document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Airline"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Airline"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations\u003cbr\u003e\u003cbr\u003eCode: `controller/airline_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `InsertDocumentForAirline`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Insert Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airline ID like airline_10",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to create a new document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Airline"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Airline"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Airline document already exists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Airline with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to delete a document with specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations\u003cbr\u003e\u003cbr\u003eCode: `controller/airline_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `DeleteDocumentForAirline`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airline collection"
+                ],
+                "summary": "Delete Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airline ID like airline_10",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Airline deleted"
+                    },
+                    "404": {
+                        "description": "Airline Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airport/direct-connections": {
+            "get": {
+                "description": "Get Direct Connections from specified Airport\u003cbr\u003e\u003cbr\u003eThis provides an example of using a [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: `controller/airport_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetDirectConnections`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Get Direct Connections from Airport",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Source airport\u003cbr\u003eExample: SFO, LHR, CDG",
+                        "name": "airport",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of direct connections to return (page size)\u003cbr\u003eDefault value : 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of direct connections to skip (for pagination)\u003cbr\u003eDefault value : 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Destination"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airport/list": {
+            "get": {
+                "description": "Get list of Airports. Optionally, you can filter the list by Country\u003cbr\u003e\u003cbr\u003eThis provides an example of using a [SQL++ query](https://docs.couchbase.com/go-sdk/current/howtos/n1ql-queries-with-sdk.html) in Couchbase to fetch a list of documents matching the specified criteria.\u003cbr\u003e\u003cbr\u003eCode: `controller/airport_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetAirports`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "List Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Country\u003cbr\u003eExample: United Kingdom, France, United States",
+                        "name": "country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airports to return (page size)\u003cbr\u003eDefault value : 10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of airports to skip (for pagination)\u003cbr\u003eDefault value : 0",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Airport"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/airport/{id}": {
+            "get": {
+                "description": "Get Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID\u003cbr\u003e\u003cbr\u003eCode: `controller/airport_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetDocumentForAirport`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Get Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airport ID like airport_1273",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Airport"
+                        }
+                    },
+                    "404": {
+                        "description": "Airport Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eCode: `controller/airport_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `UpdateDocumentForAirport`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Update Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airport ID like airport_1273",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updates document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Airport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Airport"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations\u003cbr\u003e\u003cbr\u003eCode: `controller/airport_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `InsertDocumentForAirport`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Insert Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airport ID like airport_1273",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to create a document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Airport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Airport"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Airport Document already exists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Airport with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eCode: `controller/airport_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `DeleteDocumentForAirport`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Airport collection"
+                ],
+                "summary": "Deletes Airport Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Airport ID like airport_1273",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Airport deleted"
+                    },
+                    "404": {
+                        "description": "Airport Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/route/{id}": {
+            "get": {
+                "description": "Get Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eCode: `controller/route_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `GetDocumentForRoute`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Route collection"
+                ],
+                "summary": "Get Route Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route ID like route_10000",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Route"
+                        }
+                    },
+                    "404": {
+                        "description": "Route Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eCode: `controller/route_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `UpdateDocumentForRoute`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Route collection"
+                ],
+                "summary": "Update Route Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route ID like route_10000",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updates document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Route"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Route"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eCode: `controller/route_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `InsertDocumentForRoute`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Route collection"
+                ],
+                "summary": "Insert Route Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route ID like route_10000",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to create a document",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Route"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Route"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Route Document already exists"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Route with specified ID\u003cbr\u003e\u003cbr\u003eThis provides an example of using [Key Value operations](https://docs.couchbase.com/go-sdk/current/howtos/kv-operations.html) in Couchbase to create a new document with a specified ID.\u003cbr\u003e\u003cbr\u003eKey Value operations are unique to Couchbase and provide very high speed get/set/delete operations.\u003cbr\u003e\u003cbr\u003eCode: `controller/route_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `DeleteDocumentForRoute`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Route collection"
+                ],
+                "summary": "Delete Route Document",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route ID like route_10000",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Route Deleted"
+                    },
+                    "404": {
+                        "description": "Route Document ID Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Airline": {
+            "type": "object",
+            "required": [
+                "country",
+                "icao",
+                "name"
+            ],
+            "properties": {
+                "callsign": {
+                    "type": "string",
+                    "example": "SAF"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "United States"
+                },
+                "iata": {
+                    "type": "string",
+                    "example": "SA"
+                },
+                "icao": {
+                    "type": "string",
+                    "example": "SAF"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "SampleName"
+                }
+            }
+        },
+        "models.Airport": {
+            "type": "object",
+            "required": [
+                "airportname",
+                "city",
+                "country",
+                "faa"
+            ],
+            "properties": {
+                "airportname": {
+                    "type": "string",
+                    "example": "SampleAirport"
+                },
+                "city": {
+                    "type": "string",
+                    "example": "SampleCity"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "United Kingdom"
+                },
+                "faa": {
+                    "type": "string",
+                    "example": "SAA"
+                },
+                "geo": {
+                    "$ref": "#/definitions/models.Geo"
+                },
+                "icao": {
+                    "type": "string",
+                    "example": "SAAA"
+                },
+                "tz": {
+                    "type": "string",
+                    "example": "Europe/Paris"
+                }
+            }
+        },
+        "models.Destination": {
+            "type": "object",
+            "properties": {
+                "destinationairport": {
+                    "type": "string",
+                    "example": "JFK"
+                }
+            }
+        },
+        "models.Geo": {
+            "type": "object",
+            "properties": {
+                "alt": {
+                    "type": "number",
+                    "example": 48.864716
+                },
+                "lat": {
+                    "type": "number",
+                    "example": 2.349014
+                },
+                "lon": {
+                    "type": "number",
+                    "example": 92
+                }
+            }
+        },
+        "models.Route": {
+            "type": "object",
+            "required": [
+                "airline",
+                "airlineid",
+                "destinationairport",
+                "sourceairport"
+            ],
+            "properties": {
+                "airline": {
+                    "type": "string",
+                    "example": "AF"
+                },
+                "airlineid": {
+                    "type": "string",
+                    "example": "airline_10"
+                },
+                "destinationairport": {
+                    "type": "string",
+                    "example": "JFK"
+                },
+                "distance": {
+                    "type": "number",
+                    "example": 4151.79
+                },
+                "equipment": {
+                    "type": "string",
+                    "example": "CRJ"
+                },
+                "schedule": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Schedule"
+                    }
+                },
+                "sourceairport": {
+                    "type": "string",
+                    "example": "SFO"
+                },
+                "stops": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
+        "models.Schedule": {
+            "type": "object",
+            "properties": {
+                "day": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "flight": {
+                    "type": "string",
+                    "example": "XYZ123"
+                },
+                "utc": {
+                    "type": "string",
+                    "example": "14:30"
+                }
+            }
+        }
+    }
+}
