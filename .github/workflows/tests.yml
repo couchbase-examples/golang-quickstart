@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - fix-flaky-go-tests
   pull_request:
   workflow_dispatch:
   schedule:
@@ -24,7 +25,10 @@ jobs:
       - name: Setup golang app
         run: |
           go run . &
-          sleep 10
+          sleep 15
+      - name: Check Port 8080 Status
+        run: |
+          sudo netstat -tuln | grep ':8080'
       - name: Run Go Tests
         run: |
           cd test 
