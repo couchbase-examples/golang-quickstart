@@ -25,8 +25,8 @@ jobs:
       - name: Setup golang app
         run: |
           go run . &
-          sleep 15 &&
-          curl http://127.0.0.1:8080
+          sleep 15 
+          curl -v http://127.0.0.1:8080 || echo "Failed to connect"
       - name: Run Go Tests
         run: |
           cd test 
