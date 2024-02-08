@@ -24,7 +24,8 @@ jobs:
           go-version: '1.21.4'
       - name: Setup golang app
         run: |
-          go run . &
+          go build main.go
+          ./main.go &
           sleep 15 
           curl -v http://127.0.0.1:8080 || echo "Failed to connect"
       - name: Run Go Tests
