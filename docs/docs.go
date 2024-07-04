@@ -545,7 +545,7 @@ const docTemplate = `{
         },
         "/api/v1/hotel/fetch": {
             "post": {
-                "description": "Fetch hotels using various filters such as location, rating, and price.",
+                "description": "Fetch hotels using various filters such as name, title, description, country, state and city.",
                 "produces": [
                     "application/json"
                 ],
@@ -560,7 +560,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.HotelFilter"
+                            "$ref": "#/definitions/models.HotelSearchRequest"
                         }
                     }
                 ],
@@ -570,7 +570,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Hotel"
+                                "$ref": "#/definitions/models.HotelSearch"
                             }
                         }
                     },
@@ -831,31 +831,9 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Hotel": {
+        "models.HotelSearch": {
             "type": "object",
-            "required": [
-                "address",
-                "city",
-                "country",
-                "name"
-            ],
             "properties": {
-                "address": {
-                    "type": "string",
-                    "example": "123 Sample Street, Sample City"
-                },
-                "alias": {
-                    "type": "string",
-                    "example": "Sample Alias"
-                },
-                "checkin": {
-                    "type": "string",
-                    "example": "2:00 PM"
-                },
-                "checkout": {
-                    "type": "string",
-                    "example": "11:00 AM"
-                },
                 "city": {
                     "type": "string",
                     "example": "Sample City"
@@ -868,60 +846,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "A sample hotel for testing purposes"
                 },
-                "directions": {
-                    "type": "string",
-                    "example": "Turn right at Sample Avenue"
-                },
-                "email": {
-                    "type": "string",
-                    "example": "info@samplehotel.com"
-                },
-                "fax": {
-                    "type": "string",
-                    "example": "+123456780"
-                },
-                "free_breakfast": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "free_internet": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "free_parking": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "geo": {
-                    "$ref": "#/definitions/models.Geo"
-                },
                 "name": {
                     "type": "string",
                     "example": "Sample Hotel"
-                },
-                "pets_ok": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "phone": {
-                    "type": "string",
-                    "example": "+123456789"
-                },
-                "price": {
-                    "type": "string",
-                    "example": "$150 per night"
-                },
-                "public_likes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "reviews": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Reviews"
-                    }
                 },
                 "state": {
                     "type": "string",
@@ -930,22 +857,10 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Hayfield"
-                },
-                "tollfree": {
-                    "type": "string",
-                    "example": "1800-SAMPLE"
-                },
-                "url": {
-                    "type": "string",
-                    "example": "https://www.samplehotel.com"
-                },
-                "vacancy": {
-                    "type": "boolean",
-                    "example": true
                 }
             }
         },
-        "models.HotelFilter": {
+        "models.HotelSearchRequest": {
             "type": "object",
             "properties": {
                 "city": {
@@ -979,59 +894,6 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Hayfield"
-                }
-            }
-        },
-        "models.Ratings": {
-            "type": "object",
-            "properties": {
-                "Cleanliness": {
-                    "type": "integer",
-                    "example": 5
-                },
-                "Location": {
-                    "type": "integer",
-                    "example": 4
-                },
-                "Overall": {
-                    "type": "integer",
-                    "example": 4
-                },
-                "Rooms": {
-                    "type": "integer",
-                    "example": 5
-                },
-                "Service": {
-                    "type": "integer",
-                    "example": 5
-                },
-                "Sleep Quality": {
-                    "type": "integer",
-                    "example": 4
-                },
-                "Value": {
-                    "type": "integer",
-                    "example": 4
-                }
-            }
-        },
-        "models.Reviews": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "string",
-                    "example": "John Doe"
-                },
-                "content": {
-                    "type": "string",
-                    "example": "Great service and clean rooms"
-                },
-                "date": {
-                    "type": "string",
-                    "example": "2024-01-01"
-                },
-                "ratings": {
-                    "$ref": "#/definitions/models.Ratings"
                 }
             }
         },

@@ -67,20 +67,8 @@ definitions:
         example: 92
         type: number
     type: object
-  models.Hotel:
+  models.HotelSearch:
     properties:
-      address:
-        example: 123 Sample Street, Sample City
-        type: string
-      alias:
-        example: Sample Alias
-        type: string
-      checkin:
-        example: 2:00 PM
-        type: string
-      checkout:
-        example: 11:00 AM
-        type: string
       city:
         example: Sample City
         type: string
@@ -90,68 +78,17 @@ definitions:
       description:
         example: A sample hotel for testing purposes
         type: string
-      directions:
-        example: Turn right at Sample Avenue
-        type: string
-      email:
-        example: info@samplehotel.com
-        type: string
-      fax:
-        example: "+123456780"
-        type: string
-      free_breakfast:
-        example: true
-        type: boolean
-      free_internet:
-        example: true
-        type: boolean
-      free_parking:
-        example: true
-        type: boolean
-      geo:
-        $ref: '#/definitions/models.Geo'
       name:
         example: Sample Hotel
         type: string
-      pets_ok:
-        example: true
-        type: boolean
-      phone:
-        example: "+123456789"
-        type: string
-      price:
-        example: $150 per night
-        type: string
-      public_likes:
-        items:
-          type: string
-        type: array
-      reviews:
-        items:
-          $ref: '#/definitions/models.Reviews'
-        type: array
       state:
         example: Sample State
         type: string
       title:
         example: Hayfield
         type: string
-      tollfree:
-        example: 1800-SAMPLE
-        type: string
-      url:
-        example: https://www.samplehotel.com
-        type: string
-      vacancy:
-        example: true
-        type: boolean
-    required:
-    - address
-    - city
-    - country
-    - name
     type: object
-  models.HotelFilter:
+  models.HotelSearchRequest:
     properties:
       city:
         example: Sample City
@@ -177,44 +114,6 @@ definitions:
       title:
         example: Hayfield
         type: string
-    type: object
-  models.Ratings:
-    properties:
-      Cleanliness:
-        example: 5
-        type: integer
-      Location:
-        example: 4
-        type: integer
-      Overall:
-        example: 4
-        type: integer
-      Rooms:
-        example: 5
-        type: integer
-      Service:
-        example: 5
-        type: integer
-      Sleep Quality:
-        example: 4
-        type: integer
-      Value:
-        example: 4
-        type: integer
-    type: object
-  models.Reviews:
-    properties:
-      author:
-        example: John Doe
-        type: string
-      content:
-        example: Great service and clean rooms
-        type: string
-      date:
-        example: "2024-01-01"
-        type: string
-      ratings:
-        $ref: '#/definitions/models.Ratings'
     type: object
   models.Route:
     properties:
@@ -684,15 +583,15 @@ paths:
       - Hotel
   /api/v1/hotel/fetch:
     post:
-      description: Fetch hotels using various filters such as location, rating, and
-        price.
+      description: Fetch hotels using various filters such as name, title, description,
+        country, state and city.
       parameters:
       - description: Filters document
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.HotelFilter'
+          $ref: '#/definitions/models.HotelSearchRequest'
       produces:
       - application/json
       responses:
@@ -700,7 +599,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Hotel'
+              $ref: '#/definitions/models.HotelSearch'
             type: array
         "400":
           description: Bad Request
