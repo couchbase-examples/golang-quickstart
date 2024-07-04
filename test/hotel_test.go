@@ -3,6 +3,7 @@ package test
 import (
 	"bytes"
 	"encoding/json"
+	cError "github.com/couchbase-examples/golang-quickstart/errors"
 	"github.com/couchbase-examples/golang-quickstart/models"
 	"io"
 	"net/http"
@@ -10,6 +11,24 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestHotelAutoCompleteMissingNameQuery(t *testing.T) {
+	url := collectionBaseForRoute + "/api/v1/hotel/autocomplete"
+	resp, err := http.Get(url)
+	assert.Nil(t, err)
+	defer resp.Body.Close()
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode, "StatusCode")
+
+	resultByte, err := io.ReadAll(resp.Body)
+	assert.Nil(t, err)
+
+	var result cError.Errors
+	err = json.Unmarshal(resultByte, &result)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "name query parameter is required", result.Error)
+}
 
 func TestHotelAutoComplete(t *testing.T) {
 	url := collectionBaseForRoute + "/api/v1/hotel/autocomplete?name=sea"

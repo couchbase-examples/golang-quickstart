@@ -32,6 +32,10 @@ func NewHotelController(airlineService services.IHotelService) *HotelController 
 func (h *HotelController) SearchByName() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		name := context.Query("name")
+		if name == "" {
+			context.JSON(http.StatusBadRequest, cError.Errors{Error: "name query parameter is required"})
+			return
+		}
 		hotels, err := h.HotelService.SearchByName(name)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
