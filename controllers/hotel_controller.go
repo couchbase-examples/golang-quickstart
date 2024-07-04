@@ -50,11 +50,11 @@ func (h *HotelController) SearchByName() gin.HandlerFunc {
 // Filter controller
 //
 // @Summary Fetch hotels with multiple filters
-// @Description Fetch hotels using various filters such as location, rating, and price.
+// @Description Fetch hotels using various filters such as name, title, description, country, state and city.
 // @Tags Hotel
 // @Produce json
-// @Param data body models.HotelFilter true "Filters document"
-// @Success 200 {object} []models.Hotel
+// @Param data body models.HotelSearchRequest true "Filters document"
+// @Success 200 {object} []models.HotelSearch
 // @Failure 400 "Bad Request"
 // @Failure 500 "Internal Server Error"
 // @Router /api/v1/hotel/fetch [post]
