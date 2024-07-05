@@ -15,6 +15,7 @@ type Controllers struct {
 	AirlineController *controllers.AirlineController
 	AirportController *controllers.AirportController
 	RouteController   *controllers.RouteController
+	HotelController   *controllers.HotelController
 }
 
 func SetupCollectionRoutes(router *gin.Engine, controllers Controllers) {
@@ -58,6 +59,12 @@ func SetupCollectionRoutes(router *gin.Engine, controllers Controllers) {
 	router.GET("api/v1/airport/list", controllers.AirportController.GetAirports())
 	// Get
 	router.GET("api/v1/airport/direct-connections", controllers.AirportController.GetDirectConnections())
+
+	// Hotel collection endpoints
+	// Get
+	router.GET("api/v1/hotel/autocomplete", controllers.HotelController.SearchByName())
+	// Post
+	router.POST("api/v1/hotel/filter", controllers.HotelController.Filter())
 
 	// Swagger UI and documentation
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
