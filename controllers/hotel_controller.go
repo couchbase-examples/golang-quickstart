@@ -21,7 +21,7 @@ func NewHotelController(airlineService services.IHotelService) *HotelController 
 // SearchByName
 //
 // @Summary Search by hotel name
-// @Description Search for hotels based on their name.
+// @Description Search for hotels based on their name.<br><br>This provides an example of using [FTS](https://docs.couchbase.com/server/current/search/search.html) in Couchbase.<br><br>Code: `controllers/hotel_controller.go`<br><br>Method: `SearchByName`
 // @Tags Hotel
 // @Produce json
 // @Param name query string true "name search"
@@ -50,14 +50,14 @@ func (h *HotelController) SearchByName() gin.HandlerFunc {
 // Filter controller
 //
 // @Summary Fetch hotels with multiple filters
-// @Description Fetch hotels using various filters such as name, title, description, country, state and city.
+// @Description Fetch hotels using various filters such as name, title, description, country, state and city.<br><br>This provides an example of using [FTS](https://docs.couchbase.com/server/current/search/search.html) in Couchbase.<br><br>Code: `controllers/hotel_controller.go`<br><br>Method: `Filter`
 // @Tags Hotel
 // @Produce json
 // @Param data body models.HotelSearchRequest true "Filters document"
 // @Success 200 {object} []models.HotelSearch
 // @Failure 400 "Bad Request"
 // @Failure 500 "Internal Server Error"
-// @Router /api/v1/hotel/fetch [post]
+// @Router /api/v1/hotel/filter [post]
 func (h *HotelController) Filter() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		isNullFilter := models.HotelSearchRequest{}

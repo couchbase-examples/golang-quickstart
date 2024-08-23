@@ -499,7 +499,7 @@
         },
         "/api/v1/hotel/autocomplete": {
             "get": {
-                "description": "Search for hotels based on their name.",
+                "description": "Search for hotels based on their name.\u003cbr\u003e\u003cbr\u003eThis provides an example of using [FTS](https://docs.couchbase.com/server/current/search/search.html) in Couchbase.\u003cbr\u003e\u003cbr\u003eCode: `controllers/hotel_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `SearchByName`",
                 "produces": [
                     "application/json"
                 ],
@@ -535,9 +535,9 @@
                 }
             }
         },
-        "/api/v1/hotel/fetch": {
+        "/api/v1/hotel/filter": {
             "post": {
-                "description": "Fetch hotels using various filters such as name, title, description, country, state and city.",
+                "description": "Fetch hotels using various filters such as name, title, description, country, state and city.\u003cbr\u003e\u003cbr\u003eThis provides an example of using [FTS](https://docs.couchbase.com/server/current/search/search.html) in Couchbase.\u003cbr\u003e\u003cbr\u003eCode: `controllers/hotel_controller.go`\u003cbr\u003e\u003cbr\u003eMethod: `Filter`",
                 "produces": [
                     "application/json"
                 ],

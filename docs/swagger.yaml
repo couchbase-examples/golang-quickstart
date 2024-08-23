@@ -558,7 +558,10 @@ paths:
       - Airport collection
   /api/v1/hotel/autocomplete:
     get:
-      description: Search for hotels based on their name.
+      description: 'Search for hotels based on their name.<br><br>This provides an
+        example of using [FTS](https://docs.couchbase.com/server/current/search/search.html)
+        in Couchbase.<br><br>Code: `controllers/hotel_controller.go`<br><br>Method:
+        `SearchByName`'
       parameters:
       - description: name search
         in: query
@@ -581,10 +584,12 @@ paths:
       summary: Search by hotel name
       tags:
       - Hotel
-  /api/v1/hotel/fetch:
+  /api/v1/hotel/filter:
     post:
-      description: Fetch hotels using various filters such as name, title, description,
-        country, state and city.
+      description: 'Fetch hotels using various filters such as name, title, description,
+        country, state and city.<br><br>This provides an example of using [FTS](https://docs.couchbase.com/server/current/search/search.html)
+        in Couchbase.<br><br>Code: `controllers/hotel_controller.go`<br><br>Method:
+        `Filter`'
       parameters:
       - description: Filters document
         in: body
