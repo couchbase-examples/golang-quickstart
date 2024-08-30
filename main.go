@@ -1,16 +1,21 @@
 package main
 
 import (
+	_ "embed"
+	"encoding/json"
 	"fmt"
-
 	"github.com/couchbase-examples/golang-quickstart/controllers"
 	_ "github.com/couchbase-examples/golang-quickstart/controllers"
 	"github.com/couchbase-examples/golang-quickstart/db"
 	_ "github.com/couchbase-examples/golang-quickstart/docs"
 	"github.com/couchbase-examples/golang-quickstart/routes"
 	services "github.com/couchbase-examples/golang-quickstart/service"
+	"github.com/couchbase/gocb/v2"
 	"github.com/gin-gonic/gin"
 )
+
+//go:embed hotel_search_index.json
+var hotelSearchIndex []byte
 
 // @title Golang Quickstart using Gin Gonic
 // @version 1.0
@@ -36,21 +41,39 @@ func main() {
 	// Initialize the scope
 	scope := db.GetScope(cluster)
 
+	hsi := gocb.SearchIndex{}
+	err := json.Unmarshal(hotelSearchIndex, &hsi)
+	if err != nil {
+		panic(err)
+	}
+	ghsi, err := scope.SearchIndexes().GetIndex(hsi.Name, nil)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		hsi.UUID = ghsi.UUID
+	}
+	err = scope.SearchIndexes().UpsertIndex(hsi, nil)
+	if err != nil {
+		panic(err)
+	}
 	// Create service instances
 	airlineService := services.NewAirlineService(scope)
 	airportService := services.NewAirportService(scope)
 	routeService := services.NewRouteService(scope)
+	hotelService := services.NewHotelService(scope, hsi.Name)
 
 	// Create controller instances
 	airlineController := controllers.NewAirlineController(airlineService)
 	airportController := controllers.NewAirportController(airportService)
 	routeController := controllers.NewRouteController(routeService)
+	hotelController := controllers.NewHotelController(hotelService)
 
 	// Pass to  Controllers struct to hold controller instances
 	controllers := routes.Controllers{
 		AirlineController: airlineController,
 		AirportController: airportController,
 		RouteController:   routeController,
+		HotelController:   hotelController,
 	}
 
 	// Setup routes and pass the Controllers struct
