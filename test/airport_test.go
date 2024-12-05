@@ -411,7 +411,7 @@ func TestDeleteAirportInvalidDocument(t *testing.T) {
 }
 
 func TestListAirportsInCountryWithPagination(t *testing.T) {
-	country := "United Kingdom"
+	country := "France"
 	pageSize := 3
 	iterations := 3
 	airportsList := make(map[string]bool)
