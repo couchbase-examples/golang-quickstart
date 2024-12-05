@@ -72,18 +72,18 @@ func (s *AirportService) ListAirport(country string, limit, offset int) ([]model
 
 	if country != "" {
 		query = `
-			SELECT airport.airportname,
-				airport.city,
-				airport.country,
-				airport.faa,
-				airport.geo,
-				airport.icao,
-				airport.tz
-			FROM airport AS airport
-			WHERE airport.country=$country
-			ORDER BY airport.airportname
-			LIMIT $limit
-			OFFSET $offset;
+                SELECT airport.airportname,
+                    airport.city,
+                    airport.country,
+                    airport.faa,
+                    airport.geo,
+                    airport.icao,
+                    airport.tz
+                FROM airport AS airport
+                WHERE airport.country = $country
+                ORDER BY airport.airportname
+                LIMIT $limit
+                OFFSET $offset;
 		`
 		params = map[string]interface{}{
 			"country": country,
@@ -92,17 +92,17 @@ func (s *AirportService) ListAirport(country string, limit, offset int) ([]model
 		}
 	} else {
 		query = `
-			SELECT airport.airportname,
-				airport.city,
-				airport.country,
-				airport.faa,
-				airport.geo,
-				airport.icao,
-				airport.tz
-			FROM airport AS airport
-			ORDER BY airport.airportname
-			LIMIT $limit
-			OFFSET $offset;
+                SELECT airport.airportname,
+                    airport.city,
+                    airport.country,
+                    airport.faa,
+                    airport.geo,
+                    airport.icao,
+                    airport.tz
+                FROM airport AS airport
+                ORDER BY airport.airportname
+                LIMIT $limit
+                OFFSET $offset;
 		`
 		params = map[string]interface{}{
 			"limit":  limit,

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/couchbase-examples/golang-quickstart/models"
@@ -410,13 +411,14 @@ func TestDeleteAirportInvalidDocument(t *testing.T) {
 }
 
 func TestListAirportsInCountryWithPagination(t *testing.T) {
-	country := "France"
-	pageSize := 1
-	iterations := 2
+	country := "United Kingdom"
+	pageSize := 3
+	iterations := 3
 	airportsList := make(map[string]bool)
 
+	escapedCountry := url.QueryEscape(country)
 	for i := 0; i < iterations; i++ {
-		url := fmt.Sprintf("http://127.0.0.1:8080/api/v1/airport/list?country=%s&limit=%d&offset=%d", country, pageSize, pageSize*i)
+		url := fmt.Sprintf("http://127.0.0.1:8080/api/v1/airport/list?country=%s&limit=%d&offset=%d", escapedCountry, pageSize, pageSize*i)
 
 		response, err := http.Get(url)
 		if err != nil {

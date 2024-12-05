@@ -8,6 +8,7 @@ import (
 
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"testing"
 
@@ -435,13 +436,14 @@ func TestListAirlinesInCountry(t *testing.T) {
 }
 
 func TestListAirlinesInCountryWithPagination(t *testing.T) {
-	country := "France"
-	pageSize := 1
-	iterations := 2
+	country := "United Kingdom"
+	pageSize := 3
+	iterations := 3
 	airlinesList := make(map[string]bool)
 
+	escapedCountry := url.QueryEscape(country)
 	for i := 0; i < iterations; i++ {
-		url := fmt.Sprintf("http://127.0.0.1:8080/api/v1/airline/list?country=%s&limit=%d&offset=%d", country, pageSize, pageSize*i)
+		url := fmt.Sprintf("http://127.0.0.1:8080/api/v1/airline/list?country=%s&limit=%d&offset=%d", escapedCountry, pageSize, pageSize*i)
 
 		response, err := http.Get(url)
 		if err != nil {

@@ -71,16 +71,16 @@ func (s *AirlineService) ListAirlines(country string, limit, offset int) ([]mode
 
 	if country != "" {
 		query = `
-			SELECT airline.callsign,
-				airline.country,
-				airline.iata,
-				airline.icao,
-				airline.name
-			FROM airline AS airline
-			WHERE airline.country=$country
-			ORDER BY airline.name
-			LIMIT $limit
-			OFFSET $offset;
+                SELECT airline.callsign,
+                    airline.country,
+                    airline.iata,
+                    airline.icao,
+                    airline.name
+                FROM airline as airline 
+                WHERE airline.country=$country 
+                ORDER BY airline.name
+                LIMIT $limit 
+                OFFSET $offset;
 		`
 		params = map[string]interface{}{
 			"country": country,
@@ -89,15 +89,15 @@ func (s *AirlineService) ListAirlines(country string, limit, offset int) ([]mode
 		}
 	} else {
 		query = `
-			SELECT airline.callsign,
-				airline.country,
-				airline.iata,
-				airline.icao,
-				airline.name
-			FROM airline AS airline
-			ORDER BY airline.name
-			LIMIT $limit
-			OFFSET $offset;
+                SELECT airline.callsign,
+                    airline.country,
+                    airline.iata,
+                    airline.icao,
+                    airline.name
+                FROM airline as airline 
+                ORDER BY airline.name
+                LIMIT $limit 
+                OFFSET $offset;
 		`
 		params = map[string]interface{}{
 			"limit":  limit,
