@@ -1,7 +1,8 @@
 module github.com/couchbase-examples/golang-quickstart
 
-go 1.21
-toolchain go1.22.5
+go 1.21.0
+
+toolchain go1.23.4
 
 require (
 	github.com/couchbase/gocb/v2 v2.9.3
