@@ -5,7 +5,7 @@ go 1.21.0
 toolchain go1.23.4
 
 require (
-	github.com/couchbase/gocb/v2 v2.9.3
+	github.com/couchbase/gocb/v2 v2.9.4
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
@@ -21,7 +21,7 @@ require (
 	github.com/bytedance/sonic/loader v0.2.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
-	github.com/couchbase/gocbcore/v10 v10.5.3 // indirect
+	github.com/couchbase/gocbcore/v10 v10.5.4 // indirect
 	github.com/couchbase/gocbcoreps v0.1.3 // indirect
 	github.com/couchbase/goprotostellar v1.0.2 // indirect
 	github.com/couchbaselabs/gocbconnstr/v2 v2.0.0-20240607131231-fb385523de28 // indirect
