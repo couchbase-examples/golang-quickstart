@@ -14,7 +14,7 @@ To run this prebuilt project, you will need:
 - Couchbase Server (7 or higher) with [travel-sample](https://docs.couchbase.com/go-sdk/current/ref/travel-app-data-model.html) bucket loaded.
   - [Couchbase Capella](https://www.couchbase.com/products/capella/) is the easiest way to get started.
 - Basic knowledge of [Golang](https://go.dev/tour/welcome/1) and [Gin Gonic](https://gin-gonic.com/docs/)
-- [Golang v1.21.x](https://go.dev/dl/) installed
+- [Golang v1.25.x](https://go.dev/dl/) installed
 
 ### Loading Travel Sample Bucket
 
@@ -107,10 +107,13 @@ You can try out an API by clicking on the "Try it out" button next to the endpoi
 Swagger documents the structure of request and response bodies using models. These models define the expected data structure using JSON schema and are extremely helpful in understanding what data to send and expect.
 ## Running The Tests
 
-To run the standard tests, use the following commands:
+To run the standard tests, start the application first so the test suite can call the local API on `http://127.0.0.1:8080`, then use the following commands:
 
 ```sh
-# Run standard tests for the project
+# Terminal 1: run the application from the project root
+go run .
+
+# Terminal 2: run the tests
 cd test
 go test -v
 ```
