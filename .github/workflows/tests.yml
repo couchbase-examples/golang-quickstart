@@ -33,6 +33,7 @@ jobs:
           go test ./...
       - name: Report Status
         if: always()
+        continue-on-error: true
         uses: ravsamhq/notify-slack-action@v1
         with:
           status: ${{ job.status }}
