@@ -178,15 +178,15 @@ func (ac *AirlineController) GetAirlines() gin.HandlerFunc {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),
 			})
+			return
 		}
-
-		if queryResult != nil {
-			context.JSON(http.StatusOK, queryResult)
-		} else {
+		if len(queryResult) == 0 {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Document not found with the search query specified",
 			})
+			return
 		}
+		context.JSON(http.StatusOK, queryResult)
 
 	}
 }
@@ -219,13 +219,14 @@ func (ac *AirlineController) GetAirlinesToAirport() gin.HandlerFunc {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Query execution: " + err.Error(),
 			})
+			return
 		}
-		if queryResult != nil {
-			context.JSON(http.StatusOK, queryResult)
-		} else {
+		if len(queryResult) == 0 {
 			context.JSON(http.StatusInternalServerError, cError.Errors{
 				Error: "Error, Document not found with the search query specified",
 			})
+			return
 		}
+		context.JSON(http.StatusOK, queryResult)
 	}
 }
