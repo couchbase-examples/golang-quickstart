@@ -27,6 +27,8 @@ jobs:
           ./main &
           sleep 15 
           curl -v http://127.0.0.1:8080 || echo "Failed to connect"
+      - name: Run unit tests
+        run: go test ./service/...
       - name: Run Go Tests
         run: |
           cd test 

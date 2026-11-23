@@ -109,25 +109,7 @@ func (s *AirportService) ListAirport(country string, limit, offset int) ([]model
 			"offset": offset,
 		}
 	}
-	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
-	if err != nil {
-		return nil, err
-	}
-	var document models.Airport
-	var documents []models.Airport
-
-	if queryResult == nil {
-		return nil, err
-	}
-
-	for queryResult.Next() {
-		err := queryResult.Row(&document)
-		if err != nil {
-			return nil, err
-		}
-		documents = append(documents, document)
-	}
-	return documents, nil
+	return queryAll[models.Airport](s.scope, query, params)
 }
 
 func (s *AirportService) ListDirectConnection(airport string, limit, offset int) ([]models.Destination, error) {
@@ -146,23 +128,5 @@ func (s *AirportService) ListDirectConnection(airport string, limit, offset int)
 		"limit":   limit,
 		"offset":  offset,
 	}
-	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
-	if err != nil {
-		return nil, err
-	}
-	var document models.Destination
-	var documents []models.Destination
-
-	if queryResult == nil {
-		return nil, err
-	}
-
-	for queryResult.Next() {
-		err := queryResult.Row(&document)
-		if err != nil {
-			return nil, err
-		}
-		documents = append(documents, document)
-	}
-	return documents, nil
+	return queryAll[models.Destination](s.scope, query, params)
 }

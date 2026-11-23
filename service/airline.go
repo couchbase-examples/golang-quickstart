@@ -104,25 +104,7 @@ func (s *AirlineService) ListAirlines(country string, limit, offset int) ([]mode
 			"offset": offset,
 		}
 	}
-	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
-	if err != nil {
-		return nil, err
-	}
-	var document models.Airline
-	var documents []models.Airline
-
-	if queryResult == nil {
-		return nil, err
-	}
-
-	for queryResult.Next() {
-		err := queryResult.Row(&document)
-		if err != nil {
-			return nil, err
-		}
-		documents = append(documents, document)
-	}
-	return documents, nil
+	return queryAll[models.Airline](s.scope, query, params)
 }
 
 func (s *AirlineService) ListAirlinesToAirport(airport string, limit, offset int) ([]models.Airline, error) {
@@ -150,23 +132,5 @@ func (s *AirlineService) ListAirlinesToAirport(airport string, limit, offset int
 		"limit":   limit,
 		"offset":  offset,
 	}
-	queryResult, err := s.scope.Query(query, &gocb.QueryOptions{NamedParameters: params})
-	if err != nil {
-		return nil, err
-	}
-	var document models.Airline
-	var documents []models.Airline
-
-	if queryResult == nil {
-		return nil, err
-	}
-
-	for queryResult.Next() {
-		err := queryResult.Row(&document)
-		if err != nil {
-			return nil, err
-		}
-		documents = append(documents, document)
-	}
-	return documents, nil
+	return queryAll[models.Airline](s.scope, query, params)
 }
